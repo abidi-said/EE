@@ -6,7 +6,8 @@ const isProd = process.env.NODE_ENV === 'production'
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  i18n,
+  // Only use i18n in development, not for static export
+  ...(process.env.NODE_ENV !== 'production' && { i18n }),
   images: {
     domains: ['images.unsplash.com', 'via.placeholder.com'],
     unoptimized: true, // Required for static export
