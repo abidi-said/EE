@@ -1,0 +1,225 @@
+{
+  "navigation": {
+    "home": "Accueil",
+    "services": "Services",
+    "about": "À propos",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Étanchéité & Époxy Professionnels",
+    "subtitle": "Protégez votre propriété avec nos solutions d'étanchéité et de revêtement époxy",
+    "description": "Nous offrons des services professionnels d'étanchéité et de revêtement époxy pour protéger votre propriété contre les dommages causés par l'eau. Nos solutions durables et de haute qualité garantissent une protection à long terme.",
+    "cta_primary": "Devis Gratuit",
+    "cta_secondary": "Voir Nos Travaux",
+    "features": {
+      "waterproof": {
+        "title": "100% Étanche",
+        "description": "Protection garantie contre les infiltrations d'eau"
+      },
+      "expert": {
+        "title": "Installation Expert",
+        "description": "Équipe professionnelle avec des années d'expérience"
+      },
+      "quality": {
+        "title": "Matériaux de Qualité",
+        "description": "Époxy et matériaux d'étanchéité de première qualité"
+      }
+    },
+    "video": {
+      "title": "Nos Travaux en Action",
+      "subtitle": "Découvrez nos projets d'étanchéité et d'époxy"
+    }
+  },
+  "services": {
+    "title": "Nos Services",
+    "subtitle": "Solutions complètes d'étanchéité et d'époxy",
+    "description": "Nous offrons des solutions complètes d'étanchéité et d'époxy pour les propriétés résidentielles, commerciales et industrielles. Notre équipe d'experts garantit un travail de qualité et une protection durable.",
+    "residential": {
+      "title": "Étanchéité Résidentielle",
+      "description": "Solutions d'étanchéité complètes pour les maisons, incluant les revêtements de toit, l'étanchéité des sous-sols et la protection extérieure.",
+      "features": ["Revêtement de Toit", "Étanchéité Sous-sol", "Protection Extérieure", "Systèmes de Gouttières"]
+    },
+    "commercial": {
+      "title": "Toiture Commerciale",
+      "description": "Services professionnels de toiture commerciale avec des systèmes d'étanchéité avancés pour les immeubles de bureaux et espaces commerciaux.",
+      "features": ["Systèmes Toit Plat", "Toiture Membrane", "Revêtements Commerciaux", "Programmes de Maintenance"]
+    },
+    "epoxy": {
+      "title": "Sols Époxy Industriels",
+      "description": "Solutions de sols époxy durables pour les installations industrielles, entrepôts et usines de fabrication.",
+      "features": ["Revêtements Époxy", "Surfaces Anti-dérapantes", "Résistance Chimique", "Entretien Facile"]
+    },
+    "warehouse": {
+      "title": "Étanchéité Entrepôts",
+      "description": "Étanchéité spécialisée pour entrepôts et installations de stockage pour protéger l'inventaire et l'équipement précieux.",
+      "features": ["Scellement Sol", "Protection Murs", "Systèmes de Drainage", "Contrôle Humidité"]
+    },
+    "protective": {
+      "title": "Revêtements Protecteurs",
+      "description": "Revêtements protecteurs avancés pour diverses surfaces pour prévenir les dommages d'eau et prolonger la durée de vie des matériaux.",
+      "features": ["Préparation Surface", "Application Primaire", "Systèmes Couche Finale", "Inspection Qualité"]
+    },
+    "maintenance": {
+      "title": "Maintenance & Réparation",
+      "description": "Services complets de maintenance et réparation pour maintenir vos systèmes d'étanchéité en condition optimale.",
+      "features": ["Inspections Régulières", "Maintenance Préventive", "Réparations Urgence", "Mises à Niveau Système"]
+    },
+    "cta": {
+      "title": "Prêt à Protéger Votre Propriété?",
+      "description": "Obtenez une consultation gratuite et un devis pour vos besoins d'étanchéité. Nos experts évalueront votre propriété et recommanderont les meilleures solutions.",
+      "consultation": "Planifier Consultation Gratuite",
+      "call": "Appelez Maintenant: +216 55 072 043",
+      "phone": "+216 55 072 043"
+    }
+  },
+  "about": {
+    "title": "À Propos de Nous",
+    "subtitle": "Votre partenaire de confiance en étanchéité et époxy",
+    "description": "Avec des années d'expérience dans le domaine de l'étanchéité et des revêtements époxy, nous nous engageons à fournir des solutions de qualité supérieure qui protègent et améliorent votre propriété.",
+    "main_description": "Avec plus de 15 ans d'expérience dans les services d'étanchéité et d'époxy, nous avons bâti une réputation d'excellence, de fiabilité et de satisfaction client.",
+    "expert_title": "Vos Experts en Étanchéité de Confiance",
+    "expert_description": "Chez Étanchéité Pro, nous nous spécialisons dans la fourniture de solutions d'étanchéité complètes pour les propriétés résidentielles, commerciales et industrielles. Notre équipe de professionnels certifiés combine l'expertise technique avec des matériaux de qualité pour livrer des résultats qui protègent votre investissement pour les années à venir.",
+    "expert_description2": "Nous comprenons que chaque propriété est unique, c'est pourquoi nous adoptons une approche personnalisée pour chaque projet. De l'évaluation initiale à l'inspection finale, nous nous assurons que nos solutions répondent à vos besoins spécifiques et dépassent les normes de l'industrie.",
+    "team_title": "Notre Équipe",
+    "team_subtitle": "Professionnelle et Expérimentée",
+    "stats": {
+      "experience": "Années d'Expérience",
+      "projects": "Projets Terminés",
+      "satisfaction": "Satisfaction Client",
+      "emergency": "Service d'Urgence"
+    },
+    "values_title": "Nos Valeurs Fondamentales",
+    "values_subtitle": "Ces principes guident tout ce que nous faisons et garantissent que nous livrons des résultats exceptionnels pour chaque client.",
+    "values": {
+      "quality": {
+        "title": "Qualité d'Abord",
+        "description": "Nous utilisons uniquement les matériaux de la plus haute qualité et suivons les meilleures pratiques de l'industrie pour garantir des résultats durables."
+      },
+      "craftsmanship": {
+        "title": "Savoir-Faire Expert",
+        "description": "Nos techniciens qualifiés ont des années d'expérience et suivent une formation continue pour rester à jour avec les dernières techniques."
+      },
+      "customer": {
+        "title": "Centré sur le Client",
+        "description": "Votre satisfaction est notre priorité. Nous travaillons étroitement avec vous pour comprendre vos besoins et livrer des solutions qui dépassent les attentes."
+      },
+      "reliable": {
+        "title": "Service Fiable",
+        "description": "Nous nous tenons derrière notre travail avec des garanties complètes et sommes disponibles pour les réparations d'urgence quand vous en avez le plus besoin."
+      }
+    }
+  },
+  "contact": {
+    "title": "Contactez-Nous",
+    "subtitle": "Obtenez votre devis gratuit aujourd'hui. Nos experts sont prêts à vous aider avec tous vos besoins d'étanchéité.",
+    "location": "Notre Localisation",
+    "phone": "Téléphone",
+    "email": "Email",
+    "address": "Adresse",
+    "contact_info": "Informations de Contact",
+    "get_directions": "Obtenir les Directions",
+    "hours": "Heures d'Ouverture",
+    "hours_weekdays": "Lun-Ven: 7h00 - 18h00",
+    "hours_weekend": "Sam: 8h00 - 16h00",
+    "hours_emergency": "Dim: Urgences Seulement",
+    "emergency": "Urgence 24/7",
+    "emergency_title": "Service d'Urgence",
+    "emergency_description": "Besoin d'une assistance immédiate? Nous fournissons des services d'étanchéité d'urgence 24/7 pour des situations urgentes comme les fuites, les inondations ou les dommages causés par les tempêtes.",
+    "emergency_call": "Appel d'Urgence",
+    "service_areas": "Zones de Service",
+    "service_areas_description": "Nous servons fièrement toute la Tunisie:",
+    "area_tunis": "Tunis",
+    "area_ariana": "Ariana",
+    "area_manouba": "Manouba",
+    "area_ben_arous": "Ben Arous",
+    "area_sfax": "Sfax",
+    "area_sousse": "Sousse",
+    "area_monastir": "Monastir",
+    "area_mahdia": "Mahdia",
+    "area_kairouan": "Kairouan",
+    "area_bizerte": "Bizerte",
+    "area_beja": "Béja",
+    "area_jendouba": "Jendouba",
+    "area_kef": "Le Kef",
+    "area_siliana": "Siliana",
+    "area_zaghouan": "Zaghouan",
+    "area_nabeul": "Nabeul",
+    "area_gabes": "Gabès",
+    "area_medenine": "Médenine",
+    "area_tataouine": "Tataouine",
+    "area_gafsa": "Gafsa",
+    "area_tozeur": "Tozeur",
+    "area_kebili": "Kébili",
+    "service_areas_contact": "Nous couvrons toute la Tunisie. Contactez-nous pour plus d'informations.",
+    "form": {
+      "name": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "message": "Message",
+      "submit": "Appeler Maintenant"
+    }
+  },
+  "footer": {
+    "description": "Votre partenaire de confiance pour tous vos besoins en étanchéité et revêtements époxy.",
+    "quick_links": "Liens Rapides",
+    "contact_info": "Informations de Contact",
+    "rights": "Tous droits réservés.",
+    "stay_connected": "Restez Connecté",
+    "newsletter_description": "Abonnez-vous à notre newsletter pour des conseils, mises à jour et offres spéciales.",
+    "email_placeholder": "Entrez votre email",
+    "subscribe": "S'abonner",
+    "follow_us": "Suivez-nous",
+    "business_hours": "Heures d'Ouverture",
+    "privacy_policy": "Politique de Confidentialité",
+    "terms_service": "Conditions de Service",
+    "cookie_policy": "Politique des Cookies"
+  },
+  "slideshow": {
+    "work_title": "Nos Réalisations",
+    "work_subtitle": "Découvrez quelques-unes de nos réalisations récentes en étanchéité et revêtements époxy à travers la Tunisie.",
+    "learn_more": "En Savoir Plus"
+  },
+  "map": {
+    "title": "Couverture Nationale",
+    "subtitle": "Nos services d'étanchéité et d'époxy sont disponibles dans toutes les régions de la Tunisie. Nous couvrons les 24 gouvernorats avec des équipes locales qualifiées.",
+    "map_title": "République Tunisienne",
+    "coverage": "Service Disponible Partout",
+    "hub": "Siège Principal",
+    "legend_service": "Zones de Service",
+    "legend_hub": "Centre Principal",
+    "governorates": "Gouvernorats",
+    "coverage_percent": "Couverture",
+    "cta_title": "Besoin de Services dans Votre Région?",
+    "cta_description": "Peu importe où vous vous trouvez en Tunisie, notre équipe peut vous fournir des services d'étanchéité et d'époxy professionnels. Contactez-nous pour une consultation gratuite.",
+    "cta_button": "Appelez Maintenant"
+  },
+  "tunisiaMap": {
+    "title": "Couverture Nationale",
+    "subtitle": "Nos services d'époxy et d'étanchéité sont disponibles dans toutes les régions de Tunisie",
+    "content": {
+      "title": "Notre Couverture Nationale",
+      "description": "Nous offrons nos services d'époxy et d'étanchéité dans toutes les régions de Tunisie. Notre équipe expérimentée se déplace partout dans le pays pour vous garantir des solutions de qualité supérieure.",
+      "mainHub": "Centre principal à Ariana"
+    },
+    "legend": {
+      "title": "Légende",
+      "mainHub": "Centre Principal",
+      "serviceAreas": "Zones de Service"
+    },
+    "stats": {
+      "title": "Statistiques",
+      "governorates": "Gouvernorats",
+      "coverage": "Couverture"
+    },
+    "contact": {
+      "title": "Contact"
+    },
+    "cta": {
+      "callNow": "Appelez Maintenant"
+    }
+  },
+  "common": {
+    "get_quote": "Devis Gratuit",
+    "free_estimates": "Devis Gratuits Disponibles"
+  }
+}
