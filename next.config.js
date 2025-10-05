@@ -1,23 +1,30 @@
 const { i18n } = require('./next-i18next.config')
 
 const isProd = process.env.NODE_ENV === 'production'
+const isDev = process.env.NODE_ENV === 'development'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // Only use i18n in development, not for static export
-  ...(process.env.NODE_ENV !== 'production' && { i18n }),
   images: {
     domains: ['images.unsplash.com', 'via.placeholder.com'],
     unoptimized: true, // Required for static export
   },
-  // GitHub Pages configuration
-  assetPrefix: isProd ? '/EE' : '',
-  basePath: isProd ? '/EE' : '',
-  trailingSlash: true,
-  output: 'export', // Enable static export
-  distDir: 'out', // Output directory for static files
+}
+
+// Development configuration
+if (isDev) {
+  nextConfig.i18n = i18n
+}
+
+// Production configuration for GitHub Pages
+if (isProd) {
+  nextConfig.assetPrefix = '/EE'
+  nextConfig.basePath = '/EE'
+  nextConfig.trailingSlash = true
+  nextConfig.output = 'export'
+  nextConfig.distDir = 'out'
 }
 
 module.exports = nextConfig
