@@ -71,8 +71,8 @@ const Contact = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-4 py-2 text-navy-900 rounded-lg transition-colors duration-200"
                   style={{backgroundColor: '#eab308'}}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = '#d4a017'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = '#eab308'}
+                  onMouseEnter={(e) => (e.target as HTMLAnchorElement).style.backgroundColor = '#d4a017'}
+                  onMouseLeave={(e) => (e.target as HTMLAnchorElement).style.backgroundColor = '#eab308'}
                 >
                   <FaMapMarkerAlt className="mr-2" />
                   {t('contact.get_directions')}

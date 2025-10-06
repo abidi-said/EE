@@ -118,12 +118,14 @@ const Slideshow = () => {
               boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
             }}
             onMouseEnter={(e) => {
-              e.target.style.transform = 'translateY(-50%) translateZ(25px) scale(1.1)'
-              e.target.style.boxShadow = '0 15px 40px rgba(0,0,0,0.3)'
+              const target = e.target as HTMLButtonElement
+              target.style.transform = 'translateY(-50%) translateZ(25px) scale(1.1)'
+              target.style.boxShadow = '0 15px 40px rgba(0,0,0,0.3)'
             }}
             onMouseLeave={(e) => {
-              e.target.style.transform = 'translateY(-50%) translateZ(20px) scale(1)'
-              e.target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)'
+              const target = e.target as HTMLButtonElement
+              target.style.transform = 'translateY(-50%) translateZ(20px) scale(1)'
+              target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)'
             }}
           >
             <FaChevronLeft className={`text-2xl ${isRTL ? 'rotate-180' : ''}`} />
@@ -139,12 +141,14 @@ const Slideshow = () => {
               boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
             }}
             onMouseEnter={(e) => {
-              e.target.style.transform = 'translateY(-50%) translateZ(25px) scale(1.1)'
-              e.target.style.boxShadow = '0 15px 40px rgba(0,0,0,0.3)'
+              const target = e.target as HTMLButtonElement
+              target.style.transform = 'translateY(-50%) translateZ(25px) scale(1.1)'
+              target.style.boxShadow = '0 15px 40px rgba(0,0,0,0.3)'
             }}
             onMouseLeave={(e) => {
-              e.target.style.transform = 'translateY(-50%) translateZ(20px) scale(1)'
-              e.target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)'
+              const target = e.target as HTMLButtonElement
+              target.style.transform = 'translateY(-50%) translateZ(20px) scale(1)'
+              target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)'
             }}
           >
             <FaChevronRight className={`text-2xl ${isRTL ? 'rotate-180' : ''}`} />
