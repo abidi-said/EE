@@ -18,10 +18,8 @@ if (isDev) {
   nextConfig.i18n = i18n
 }
 
-// Production configuration for GitHub Pages
+// Production configuration for static export (Netlify)
 if (isProd) {
-  nextConfig.assetPrefix = '/EE'
-  nextConfig.basePath = '/EE'
   nextConfig.trailingSlash = true
   nextConfig.output = 'export'
   nextConfig.distDir = 'out'
