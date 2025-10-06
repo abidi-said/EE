@@ -1,7 +1,5 @@
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
-import { GetStaticProps } from 'next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Header from '../components/Header'
 import Hero from '../components/Hero'
 import Services from '../components/Services'
@@ -48,10 +46,3 @@ export default function Home() {
   )
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale ?? 'fr', ['common'])),
-    },
-  }
-}

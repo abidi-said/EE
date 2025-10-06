@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { FaPlay, FaShieldAlt, FaTools, FaAward } from 'react-icons/fa'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from '../hooks/useTranslation'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const Hero = () => {
   const [isVideoOpen, setIsVideoOpen] = useState(false)
-  const { t } = useTranslation('common')
+  const { t } = useTranslation()
   const { isRTL } = useLanguage()
 
   const features = [

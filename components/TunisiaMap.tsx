@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from '../hooks/useTranslation';
 
 const TunisiaMap: React.FC = () => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation();
   const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 

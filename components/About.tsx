@@ -1,9 +1,9 @@
 import { FaAward, FaUsers } from 'react-icons/fa'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from '../hooks/useTranslation'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const About = () => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation()
   const { isRTL } = useLanguage()
 
 

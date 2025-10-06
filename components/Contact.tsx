@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from '../hooks/useTranslation'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const Contact = () => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation()
   const { isRTL } = useLanguage()
 
   const contactInfo = [
@@ -52,7 +52,7 @@ const Contact = () => {
               {/* Map Embed */}
               <div className="relative w-full h-80 rounded-lg overflow-hidden">
                 <iframe
-                  src="https://www.google.com/maps?q=V672%2BGH+RN8%2C+rue+bizerte%2C+Tunis+2000%2C+Ariana%2C+Tunisia&output=embed"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3192.5!2d10.2!3d36.8!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzbCsDQ4JzAwLjAiTiAxMMKwMTInMDAuMCJF!5e0!3m2!1sen!2stn!4v1234567890123!5m2!1sen!2stn"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

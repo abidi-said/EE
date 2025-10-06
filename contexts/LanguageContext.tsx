@@ -1,5 +1,4 @@
-import { createContext, useContext, ReactNode } from 'react'
-import { useRouter } from 'next/router'
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react'
 
 interface LanguageContextType {
   locale: string
@@ -22,12 +21,24 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
-  const router = useRouter()
-  const { locale = 'fr' } = router
+  // Initialize with French as default, but check localStorage for saved preference
+  const [locale, setLocale] = useState('fr')
   const isRTL = locale === 'ar'
 
+  // Load saved language preference on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedLocale = localStorage.getItem('language') || 'fr'
+      setLocale(savedLocale)
+    }
+  }, [])
+
   const changeLanguage = (newLocale: string) => {
-    router.push(router.asPath, router.asPath, { locale: newLocale })
+    setLocale(newLocale)
+    // Save to localStorage for persistence
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('language', newLocale)
+    }
   }
 
   return (

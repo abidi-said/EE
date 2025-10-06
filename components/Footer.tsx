@@ -1,10 +1,10 @@
 import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from '../hooks/useTranslation'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
-  const { t } = useTranslation('common')
+  const { t } = useTranslation()
   const { isRTL } = useLanguage()
 
   const quickLinks = [

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from '../hooks/useTranslation'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const Slideshow = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const { t } = useTranslation('common')
+  const { t } = useTranslation()
   const { isRTL } = useLanguage()
 
   const slides = [

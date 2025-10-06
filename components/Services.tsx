@@ -1,9 +1,9 @@
 import { FaHome, FaBuilding, FaIndustry, FaWarehouse, FaShieldAlt, FaTools } from 'react-icons/fa'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from '../hooks/useTranslation'
 import { useLanguage } from '../contexts/LanguageContext'
 
 const Services = () => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation()
   const { isRTL } = useLanguage()
 
   const services = [
