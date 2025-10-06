@@ -110,7 +110,7 @@ const Header = () => {
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <div className={`lg:hidden mt-4 pb-4 ${isScrolled ? 'bg-white' : 'bg-navy-900 bg-opacity-95 backdrop-blur-sm'} rounded-lg shadow-lg`}>
+            <div className={`lg:hidden mt-4 pb-4 ${isScrolled ? 'bg-white' : 'bg-navy-900 bg-opacity-95 backdrop-blur-sm'} rounded-lg`}>
               <div className="flex flex-col space-y-4 p-4">
                 {navigation.map((item) => (
                   <a

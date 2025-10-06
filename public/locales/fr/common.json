@@ -37,7 +37,7 @@
     "residential": {
       "title": "Étanchéité Résidentielle",
       "description": "Solutions d'étanchéité complètes pour les maisons, incluant les revêtements de toit, l'étanchéité des sous-sols et la protection extérieure.",
-      "features": ["Revêtement de Toit", "Étanchéité Sous-sol", "Protection Extérieure", "Systèmes de Gouttières"]
+      "features": ["Revêtement de Toit", "Étanchéité Sous-sol", "Protection Extérieure"]
     },
     "commercial": {
       "title": "Toiture Commerciale",
@@ -52,7 +52,7 @@
     "warehouse": {
       "title": "Étanchéité Entrepôts",
       "description": "Étanchéité spécialisée pour entrepôts et installations de stockage pour protéger l'inventaire et l'équipement précieux.",
-      "features": ["Scellement Sol", "Protection Murs", "Systèmes de Drainage", "Contrôle Humidité"]
+      "features": ["Scellement Sol", "Protection Murs", "Contrôle Humidité"]
     },
     "protective": {
       "title": "Revêtements Protecteurs",

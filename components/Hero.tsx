@@ -92,7 +92,7 @@ const Hero = () => {
               >
                 {/* Thumbnail Image */}
                 <div 
-                  className="w-full h-96 bg-cover bg-center bg-no-repeat rounded-2xl"
+                  className="w-full h-48 sm:h-64 md:h-80 lg:h-96 bg-cover bg-center bg-no-repeat rounded-2xl"
                   style={{
                     backgroundImage: `url('/images/slideshow/etancheite-batiment-commercial.png')`
                   }}
@@ -102,18 +102,18 @@ const Hero = () => {
                   
                   {/* Play Button */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-20 h-20 bg-gold-500 rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all duration-300 group-hover:shadow-gold-500/50">
-                      <FaPlay className="text-white text-2xl ml-1" />
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gold-500 rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all duration-300 group-hover:shadow-gold-500/50">
+                      <FaPlay className="text-white text-lg sm:text-2xl ml-1" />
                     </div>
                   </div>
                   
                   {/* Video Title Overlay */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <div className="bg-black bg-opacity-60 backdrop-blur-sm rounded-lg p-3">
-                      <h3 className="text-white font-semibold text-lg mb-1">
+                  <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4">
+                    <div className="bg-black bg-opacity-60 backdrop-blur-sm rounded-lg p-2 sm:p-3">
+                      <h3 className="text-white font-semibold text-sm sm:text-lg mb-1">
                         {t('hero.video.title')}
                       </h3>
-                      <p className="text-gold-200 text-sm">
+                      <p className="text-gold-200 text-xs sm:text-sm">
                         {t('hero.video.subtitle')}
                       </p>
                     </div>
@@ -122,11 +122,11 @@ const Hero = () => {
               </div>
               
               {/* Floating elements */}
-              <div className={`absolute -top-4 ${isRTL ? '-left-4' : '-right-4'} w-20 h-20 bg-gold-500 rounded-full flex items-center justify-center shadow-lg`}>
-                <span className="text-2xl">🏆</span>
+              <div className={`absolute -top-2 sm:-top-4 ${isRTL ? '-left-2 sm:-left-4' : '-right-2 sm:-right-4'} w-12 h-12 sm:w-20 sm:h-20 bg-gold-500 rounded-full flex items-center justify-center shadow-lg`}>
+                <span className="text-lg sm:text-2xl">🏆</span>
               </div>
-              <div className={`absolute -bottom-4 ${isRTL ? '-right-4' : '-left-4'} w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg`}>
-                <span className="text-xl">💯</span>
+              <div className={`absolute -bottom-2 sm:-bottom-4 ${isRTL ? '-right-2 sm:-right-4' : '-left-2 sm:-left-4'} w-10 h-10 sm:w-16 sm:h-16 bg-white rounded-full flex items-center justify-center shadow-lg`}>
+                <span className="text-sm sm:text-xl">💯</span>
               </div>
             </div>
           </div>
@@ -135,20 +135,20 @@ const Hero = () => {
 
       {/* Video Modal */}
       {isVideoOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="relative w-full max-w-4xl">
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="relative w-full max-w-4xl mx-auto">
             <button
               onClick={() => setIsVideoOpen(false)}
-              className={`absolute -top-12 ${isRTL ? 'left-0' : 'right-0'} text-white text-2xl hover:text-gray-300 z-10`}
+              className={`absolute -top-8 sm:-top-12 ${isRTL ? 'left-2 sm:left-0' : 'right-2 sm:right-0'} text-white text-xl sm:text-2xl hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center`}
             >
               ✕
             </button>
-            <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
+            <div className="bg-gray-900 rounded-lg overflow-hidden" style={{ height: '70vh', maxHeight: '500px' }}>
               <video 
                 className="w-full h-full object-contain modal-video"
                 controls
                 autoPlay
-                style={{ maxHeight: 'none' }}
+                playsInline
               >
                 <source src="/company video/AQNpVv2SfbHUVpnw6cgfq7KXfG4JXPu2sNDLC-yMwUSfGznNGF4IX24q-qgwN-OcVuWH1uAqWvN7fSkwxzYBA6rqWKWkHWZxpALE52dMPBu6SQ.mp4" type="video/mp4" />
                 Votre navigateur ne supporte pas la lecture de vidéos.
@@ -177,6 +177,24 @@ const Hero = () => {
         .modal-video {
           object-fit: contain !important;
           background-color: #000;
+          width: 100% !important;
+          height: 100% !important;
+        }
+        
+        /* Mobile modal video optimizations */
+        @media (max-width: 640px) {
+          .modal-video {
+            max-height: 60vh !important;
+            height: 60vh !important;
+          }
+        }
+        
+        /* Tablet modal video optimizations */
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .modal-video {
+            max-height: 70vh !important;
+            height: 70vh !important;
+          }
         }
         
         video:focus {
