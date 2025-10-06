@@ -42,7 +42,7 @@ const Header = () => {
               <span>Tunis, Tunisia</span>
             </div>
           </div>
-          <div className="hidden md:flex items-center space-x-4">
+          <div className={`hidden md:flex items-center ${isRTL ? 'space-x-reverse space-x-6' : 'space-x-4'}`}>
             <span>{t('common.free_estimates')}</span>
             <LanguageSwitcher />
           </div>

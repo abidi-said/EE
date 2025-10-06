@@ -220,6 +220,10 @@
   },
   "common": {
     "get_quote": "Devis Gratuit",
-    "free_estimates": "Devis Gratuits Disponibles"
+    "free_estimates": "Devis Gratuits Disponibles",
+    "languages": {
+      "french": "Français",
+      "arabic": "العربية"
+    }
   }
 }

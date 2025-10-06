@@ -220,6 +220,10 @@
   },
   "common": {
     "get_quote": "معاينة مجانية",
-    "free_estimates": "عروض أسعار مجانية متاحة"
+    "free_estimates": "عروض أسعار مجانية متاحة",
+    "languages": {
+      "french": "الفرنسية",
+      "arabic": "العربية"
+    }
   }
 }

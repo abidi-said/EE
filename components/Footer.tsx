@@ -34,11 +34,11 @@ const Footer = () => {
     <footer className="bg-gray-900 text-white">
       {/* Main Footer Content */}
       <div className="container mx-auto px-4 py-16">
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-8">
+        <div className={`grid lg:grid-cols-4 md:grid-cols-2 gap-8 ${isRTL ? 'rtl' : 'ltr'}`}>
           {/* Company Info */}
-          <div className="space-y-6">
-            <div className="flex items-center">
-              <div className="flex items-center space-x-4">
+          <div className="space-y-6" style={isRTL ? {textAlign: 'right', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start'} : {}}>
+            <div className="flex items-center" style={isRTL ? {justifyContent: 'flex-end', width: '100%'} : {}}>
+              <div className="flex items-center space-x-4" style={isRTL ? {flexDirection: 'row', justifyContent: 'flex-end', gap: '20px'} : {}}>
                 {/* Logo - EE Monogram */}
                 <div className="w-16 h-16 bg-gold-500 border border-navy-900 flex items-center justify-center" style={{backgroundColor: '#eab308', borderColor: '#102a43'}}>
                   <span className="font-bold text-2xl" style={{color: '#102a43'}}>EE</span>
@@ -49,19 +49,19 @@ const Footer = () => {
                 </div>
               </div>
             </div>
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-gray-300 leading-relaxed" style={isRTL ? {textAlign: 'right', width: '100%'} : {}}>
               {t('footer.description')}
             </p>
-            <div className="space-y-3">
-              <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'}`}>
+            <div className="space-y-3" style={isRTL ? {width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start'} : {}}>
+              <div className="flex items-center space-x-3" style={isRTL ? {flexDirection: 'row', justifyContent: 'flex-start', width: '100%', gap: '12px'} : {}}>
                 <FaPhone className="text-gold-400" />
                 <span className="text-gray-300 ltr">+216 55 072 043</span>
               </div>
-              <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'}`}>
+              <div className="flex items-center space-x-3" style={isRTL ? {flexDirection: 'row', justifyContent: 'flex-start', width: '100%', gap: '12px'} : {}}>
                 <FaPhone className="text-gold-400" />
                 <span className="text-gray-300 ltr">+216 54 558 463</span>
               </div>
-              <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'}`}>
+              <div className="flex items-center space-x-3" style={isRTL ? {flexDirection: 'row', justifyContent: 'flex-start', width: '100%', gap: '12px'} : {}}>
                 <FaMapMarkerAlt className="text-gold-400" />
                 <span className="text-gray-300">V672+GH RN8, rue bizerte, Tunis 2000, Ariana, Tunisia</span>
               </div>
@@ -100,10 +100,10 @@ const Footer = () => {
           </div>
 
           {/* Social & Business Hours */}
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <h4 className="font-semibold text-white">{t('footer.follow_us')}</h4>
-              <div className="flex space-x-4">
+          <div className="space-y-6" style={isRTL ? {textAlign: 'right', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start'} : {}}>
+            <div className="space-y-4" style={isRTL ? {width: '100%'} : {}}>
+              <h4 className="font-semibold text-white" style={isRTL ? {textAlign: 'right'} : {}}>{t('footer.follow_us')}</h4>
+              <div className="flex space-x-4" style={isRTL ? {justifyContent: 'flex-end', width: '100%'} : {}}>
                 {socialLinks.map((social, index) => (
                   <a
                     key={index}
@@ -119,9 +119,9 @@ const Footer = () => {
               </div>
             </div>
 
-            <div className="pt-4">
-              <h4 className="font-semibold text-white mb-3">{t('footer.business_hours')}</h4>
-              <div className="space-y-1 text-sm text-gray-300">
+            <div className="pt-4" style={isRTL ? {width: '100%'} : {}}>
+              <h4 className="font-semibold text-white mb-3" style={isRTL ? {textAlign: 'right'} : {}}>{t('footer.business_hours')}</h4>
+              <div className="space-y-1 text-sm text-gray-300" style={isRTL ? {textAlign: 'right'} : {}}>
                 <div>{t('contact.hours_weekdays')}</div>
                 <div>{t('contact.hours_weekend')}</div>
                 <div>{t('contact.hours_emergency')}</div>

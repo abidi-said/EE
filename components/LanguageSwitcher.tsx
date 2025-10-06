@@ -1,4 +1,5 @@
 import { useLanguage } from '../contexts/LanguageContext'
+import { useTranslation } from '../hooks/useTranslation'
 import { FaGlobe } from 'react-icons/fa'
 
 interface LanguageSwitcherProps {
@@ -7,11 +8,12 @@ interface LanguageSwitcherProps {
 }
 
 const LanguageSwitcher = ({ textColor = 'text-white', hoverColor = 'hover:text-primary-200' }: LanguageSwitcherProps) => {
-  const { locale, changeLanguage } = useLanguage()
+  const { locale, changeLanguage, isRTL } = useLanguage()
+  const { t } = useTranslation()
 
   const languages = [
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'ar', name: 'العربية', flag: '🇹🇳' }
+    { code: 'fr', name: t('common.languages.french'), flag: '🇫🇷' },
+    { code: 'ar', name: t('common.languages.arabic'), flag: '🇹🇳' }
   ]
 
   return (
@@ -23,16 +25,18 @@ const LanguageSwitcher = ({ textColor = 'text-white', hoverColor = 'hover:text-p
         </span>
       </button>
       
-      <div className="absolute top-full right-0 mt-2 w-40 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+      <div className={`absolute top-full mt-2 w-40 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${isRTL ? 'left-0' : 'right-0'}`}>
         {languages.map((language) => (
           <button
             key={language.code}
             onClick={() => changeLanguage(language.code)}
-            className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${
+            className={`w-full px-4 py-2 text-sm hover:bg-gray-100 transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${
+              isRTL ? 'text-right' : 'text-left'
+            } ${
               locale === language.code ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
             }`}
           >
-            <span className="mr-2">{language.flag}</span>
+            <span className={isRTL ? 'ml-3' : 'mr-3'}>{language.flag}</span>
             {language.name}
           </button>
         ))}
