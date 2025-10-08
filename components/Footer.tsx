@@ -38,16 +38,22 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-6" style={isRTL ? {textAlign: 'right', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start'} : {}}>
             <div className="flex items-center" style={isRTL ? {justifyContent: 'flex-end', width: '100%'} : {}}>
-              <div className="flex items-center space-x-4" style={isRTL ? {flexDirection: 'row', justifyContent: 'flex-end', gap: '20px'} : {}}>
-                {/* Logo - EE Monogram */}
-                <div className="w-16 h-16 bg-gold-500 border border-navy-900 flex items-center justify-center" style={{backgroundColor: '#eab308', borderColor: '#102a43'}}>
-                  <span className="font-bold text-2xl" style={{color: '#102a43'}}>EE</span>
-                </div>
+              <a 
+                href="/" 
+                className="flex items-center space-x-4 hover:opacity-80 transition-opacity duration-200"
+                style={isRTL ? {flexDirection: 'row', justifyContent: 'flex-end', gap: '20px'} : {}}
+              >
+                {/* Logo Image */}
+                <img 
+                  src="/images/logo/EE-logo.png" 
+                  alt="Époxy & Étanchéité Logo" 
+                  className="w-16 h-16 object-contain"
+                />
                 <div className="flex flex-col">
                   <span className="text-2xl font-bold" style={{color: '#eab308'}}>Époxy & Étanchéité</span>
                   <span className="text-sm" style={{color: '#eab308'}}>By LaMaison.tn</span>
                 </div>
-              </div>
+              </a>
             </div>
             <p className="text-gray-300 leading-relaxed" style={isRTL ? {textAlign: 'right', width: '100%'} : {}}>
               {t('footer.description')}

@@ -57,16 +57,21 @@ const Header = () => {
           <div className="flex justify-between items-center">
             {/* Logo */}
             <div className="flex items-center">
-              <div className="flex items-center space-x-3">
-                {/* Logo - EE Monogram */}
-                <div className="w-12 h-12 bg-gold-500 border border-navy-900 flex items-center justify-center" style={{backgroundColor: '#eab308', borderColor: '#102a43'}}>
-                  <span className="font-bold text-xl" style={{color: '#102a43'}}>EE</span>
-                </div>
+              <a 
+                href="/" 
+                className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200"
+              >
+                {/* Logo Image */}
+                <img 
+                  src="/images/logo/EE-logo.png" 
+                  alt="Époxy & Étanchéité Logo" 
+                  className="w-12 h-12 object-contain"
+                />
                 <div className="flex flex-col">
                   <span className={`text-xl font-bold ${isScrolled ? 'text-navy-800' : 'text-white'}`}>Époxy & Étanchéité</span>
                   <span className={`text-xs ${isScrolled ? 'text-gold-600' : 'text-gold-300'}`} style={!isScrolled ? {color: '#eab308'} : {}}>By LaMaison.tn</span>
                 </div>
-              </div>
+              </a>
             </div>
 
             {/* Desktop Navigation */}

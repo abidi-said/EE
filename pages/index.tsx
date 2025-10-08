@@ -83,8 +83,8 @@ export default function Home() {
                 },
                 "openingHours": "Mo-Fr 08:00-18:00, Sa 08:00-14:00",
                 "priceRange": "$$",
-                "image": `${baseUrl}/images/slideshow/etancheite-batiment-commercial.png`,
-                "logo": `${baseUrl}/images/slideshow/etancheite-batiment-commercial.png`,
+                "image": `${baseUrl}/images/logo/EE-logo.png`,
+                "logo": `${baseUrl}/images/logo/EE-logo.png`,
                 "sameAs": [
                   "https://www.facebook.com/profile.php?id=61576714255009"
                 ],
