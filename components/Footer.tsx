@@ -11,6 +11,7 @@ const Footer = () => {
     { name: t('navigation.home'), href: '#home' },
     { name: t('navigation.services'), href: '#services' },
     { name: t('navigation.about'), href: '#about' },
+    { name: t('navigation.blog'), href: '/blog' },
     { name: t('navigation.contact'), href: '#contact' }
   ]
 

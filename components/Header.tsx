@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react'
-import { FaBars, FaTimes, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa'
+import Link from 'next/link'
+import { FaBars, FaTimes, FaPhone, FaMapMarkerAlt } from 'react-icons/fa'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLanguage } from '../contexts/LanguageContext'
 import LanguageSwitcher from './LanguageSwitcher'
 
-const Header = () => {
+interface HeaderProps {
+  variant?: 'home' | 'inner'
+}
+
+const Header = ({ variant = 'home' }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(variant === 'inner')
   const { t } = useTranslation()
   const { isRTL } = useLanguage()
 
@@ -18,16 +23,20 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  const isInner = variant === 'inner'
+  const navScrolled = isScrolled || isInner
+
   const navigation = [
-    { name: t('navigation.home'), href: '#home' },
-    { name: t('navigation.services'), href: '#services' },
-    { name: t('navigation.about'), href: '#about' },
-    { name: t('navigation.contact'), href: '#contact' },
+    { name: t('navigation.home'), href: isInner ? '/#home' : '#home' },
+    { name: t('navigation.services'), href: isInner ? '/#services' : '#services' },
+    { name: t('navigation.about'), href: isInner ? '/#about' : '#about' },
+    { name: t('navigation.blog'), href: '/blog' },
+    { name: t('navigation.contact'), href: isInner ? '/#contact' : '#contact' },
   ]
 
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'
+      navScrolled ? 'bg-white shadow-lg' : 'bg-transparent'
     }`}>
       {/* Top bar */}
       <div className="bg-navy-800 text-gold-400 py-2">
@@ -51,13 +60,13 @@ const Header = () => {
 
       {/* Main navigation */}
       <nav className={`transition-all duration-300 ${
-        isScrolled ? 'py-2' : 'py-4'
+        navScrolled ? 'py-2' : 'py-4'
       }`}>
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             {/* Logo */}
             <div className="flex items-center">
-              <a 
+              <Link 
                 href="/" 
                 className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200"
               >
@@ -68,26 +77,40 @@ const Header = () => {
                   className="w-12 h-12 object-contain"
                 />
                 <div className="flex flex-col">
-                  <span className={`text-xl font-bold ${isScrolled ? 'text-navy-800' : 'text-white'}`}>Époxy & Étanchéité</span>
-                  <span className={`text-xs ${isScrolled ? 'text-gold-600' : 'text-gold-300'}`} style={!isScrolled ? {color: '#eab308'} : {}}>By LaMaison.tn</span>
+                  <span className={`text-xl font-bold ${navScrolled ? 'text-navy-800' : 'text-white'}`}>Époxy & Étanchéité</span>
+                  <span className={`text-xs ${navScrolled ? 'text-gold-600' : 'text-gold-300'}`} style={!navScrolled ? {color: '#eab308'} : {}}>By LaMaison.tn</span>
                 </div>
-              </a>
+              </Link>
             </div>
 
             {/* Desktop Navigation */}
             <div className={`hidden lg:flex items-center ${isRTL ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
               {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className={`font-medium transition-colors duration-200 ${
-                    isScrolled 
-                      ? 'text-gray-700 hover:text-navy-800' 
-                      : 'text-white hover:text-gold-400'
-                  }`}
-                >
-                  {item.name}
-                </a>
+                item.href.startsWith('/') && !item.href.includes('#') ? (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`font-medium transition-colors duration-200 ${
+                      navScrolled 
+                        ? 'text-gray-700 hover:text-navy-800' 
+                        : 'text-white hover:text-gold-400'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className={`font-medium transition-colors duration-200 ${
+                      navScrolled 
+                        ? 'text-gray-700 hover:text-navy-800' 
+                        : 'text-white hover:text-gold-400'
+                    }`}
+                  >
+                    {item.name}
+                  </a>
+                )
               ))}
               <a
                 href="tel:+21655072043"
@@ -106,30 +129,45 @@ const Header = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? (
-                <FaTimes className={isScrolled ? 'text-gray-700' : 'text-white'} />
+                <FaTimes className={navScrolled ? 'text-gray-700' : 'text-white'} />
               ) : (
-                <FaBars className={isScrolled ? 'text-gray-700' : 'text-white'} />
+                <FaBars className={navScrolled ? 'text-gray-700' : 'text-white'} />
               )}
             </button>
           </div>
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <div className={`lg:hidden mt-4 pb-4 ${isScrolled ? 'bg-white' : 'bg-navy-900 bg-opacity-95 backdrop-blur-sm'} rounded-lg`}>
+            <div className={`lg:hidden mt-4 pb-4 ${navScrolled ? 'bg-white' : 'bg-navy-900 bg-opacity-95 backdrop-blur-sm'} rounded-lg`}>
               <div className="flex flex-col space-y-4 p-4">
                 {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className={`font-medium transition-colors duration-200 ${
-                      isScrolled 
-                        ? 'text-navy-800 hover:text-navy-900' 
-                        : 'text-white hover:text-gold-400'
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.name}
-                  </a>
+                  item.href.startsWith('/') && !item.href.includes('#') ? (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`font-medium transition-colors duration-200 ${
+                        navScrolled 
+                          ? 'text-navy-800 hover:text-navy-900' 
+                          : 'text-white hover:text-gold-400'
+                      }`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ) : (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      className={`font-medium transition-colors duration-200 ${
+                        navScrolled 
+                          ? 'text-navy-800 hover:text-navy-900' 
+                          : 'text-white hover:text-gold-400'
+                      }`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </a>
+                  )
                 ))}
                     <a
                       href="tel:+21655072043"
@@ -142,8 +180,8 @@ const Header = () => {
                     </a>
                 <div className="pt-2">
                   <LanguageSwitcher 
-                    textColor={isScrolled ? 'text-navy-800' : 'text-white'}
-                    hoverColor={isScrolled ? 'hover:text-navy-900' : 'hover:text-gold-400'}
+                    textColor={navScrolled ? 'text-navy-800' : 'text-white'}
+                    hoverColor={navScrolled ? 'hover:text-navy-900' : 'hover:text-gold-400'}
                   />
                 </div>
               </div>

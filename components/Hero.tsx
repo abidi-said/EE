@@ -1,12 +1,30 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FaPlay, FaShieldAlt, FaTools, FaAward } from 'react-icons/fa'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLanguage } from '../contexts/LanguageContext'
 
+interface SlideConfig {
+  image: string
+  title: string
+  location: string
+}
+
 const Hero = () => {
   const [isVideoOpen, setIsVideoOpen] = useState(false)
+  const [videoSrc, setVideoSrc] = useState('/uploads/video/hero.mp4')
+  const [thumbnail, setThumbnail] = useState('/uploads/slider/etancheite-batiment-commercial.png')
   const { t } = useTranslation()
   const { isRTL } = useLanguage()
+
+  useEffect(() => {
+    fetch('/api/site-config')
+      .then((r) => r.json())
+      .then((config) => {
+        if (config.heroVideo) setVideoSrc(config.heroVideo)
+        if (config.heroThumbnail) setThumbnail(config.heroThumbnail)
+      })
+      .catch(() => {})
+  }, [])
 
   const features = [
     {
@@ -94,7 +112,7 @@ const Hero = () => {
                 <div 
                   className="w-full h-48 sm:h-64 md:h-80 lg:h-96 bg-cover bg-center bg-no-repeat rounded-2xl"
                   style={{
-                    backgroundImage: `url('/images/slideshow/etancheite-batiment-commercial.png')`
+                    backgroundImage: `url(${thumbnail})`
                   }}
                 >
                   {/* Overlay */}
@@ -150,7 +168,7 @@ const Hero = () => {
                 autoPlay
                 playsInline
               >
-                <source src="/company video/AQNpVv2SfbHUVpnw6cgfq7KXfG4JXPu2sNDLC-yMwUSfGznNGF4IX24q-qgwN-OcVuWH1uAqWvN7fSkwxzYBA6rqWKWkHWZxpALE52dMPBu6SQ.mp4" type="video/mp4" />
+                <source src={videoSrc} type="video/mp4" />
                 Votre navigateur ne supporte pas la lecture de vidéos.
               </video>
             </div>

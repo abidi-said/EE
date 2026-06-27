@@ -5,80 +5,30 @@ import { useLanguage } from '../contexts/LanguageContext'
 
 const Slideshow = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [slides, setSlides] = useState<{ image: string; title: string; location: string }[]>([])
+  const [loaded, setLoaded] = useState(false)
   const { t } = useTranslation()
   const { isRTL } = useLanguage()
 
-  const slides = [
-    {
-      id: 1,
-      image: '/images/slideshow/etancheite-toiture-commerciale.png',
-      title: 'Étanchéité Toiture Commerciale',
-      location: 'Tunis, Tunisie'
-    },
-    {
-      id: 2,
-      image: '/images/slideshow/revetement-epoxy-industriel.png',
-      title: 'Revêtement Époxy Industriel',
-      location: 'Sfax, Tunisie'
-    },
-    {
-      id: 3,
-      image: '/images/slideshow/isolation-sous-sol-residentiel.png',
-      title: 'Isolation Sous-sol Résidentiel',
-      location: 'Ariana, Tunisie'
-    },
-    {
-      id: 4,
-      image: '/images/slideshow/protection-murale-exterieure.png',
-      title: 'Protection Murale Extérieure',
-      location: 'Sousse, Tunisie'
-    },
-    {
-      id: 5,
-      image: '/images/slideshow/sols-epoxy-entrepot.png',
-      title: 'Sols Époxy Entrepôt',
-      location: 'Bizerte, Tunisie'
-    },
-    {
-      id: 6,
-      image: '/images/slideshow/etancheite-terrasse.png',
-      title: 'Étanchéité Terrasse',
-      location: 'Monastir, Tunisie'
-    },
-    {
-      id: 7,
-      image: '/images/slideshow/revetement-toiture-plate.png',
-      title: 'Revêtement Toiture Plate',
-      location: 'Nabeul, Tunisie'
-    },
-    {
-      id: 8,
-      image: '/images/slideshow/etancheite-batiment-commercial.png',
-      title: 'Étanchéité Bâtiment Commercial',
-      location: 'Gabès, Tunisie'
-    },
-    {
-      id: 9,
-      image: '/images/slideshow/sols-epoxy-industriel.png',
-      title: 'Sols Époxy Industriel',
-      location: 'Gafsa, Tunisie'
-    },
-    {
-      id: 10,
-      image: '/images/slideshow/etancheite-residentiel.png',
-      title: 'Étanchéité Résidentiel',
-      location: 'Kairouan, Tunisie'
-    }
-  ]
-
-  // Auto-slide functionality
   useEffect(() => {
+    fetch('/api/site-config')
+      .then((r) => r.json())
+      .then((config) => {
+        if (config.slides?.length > 0) setSlides(config.slides)
+      })
+      .catch(() => {})
+      .finally(() => setLoaded(true))
+  }, [])
+
+  useEffect(() => {
+    if (slides.length === 0) return
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
-    }, 5000) // Change slide every 5 seconds
-
+    }, 5000)
     return () => clearInterval(timer)
   }, [slides.length])
+
+  if (!loaded && slides.length === 0) return null
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length)
@@ -86,10 +36,6 @@ const Slideshow = () => {
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
-  }
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index)
   }
 
   return (
@@ -107,51 +53,23 @@ const Slideshow = () => {
 
         {/* Cards Container */}
         <div className="relative h-[28rem] lg:h-[32rem] perspective-1000">
-          {/* Navigation Arrows - Inside slideshow container */}
+          {/* Navigation Arrows */}
           <button
             onClick={prevSlide}
-            className={`absolute top-1/2 transform -translate-y-1/2 z-20 w-16 h-16 bg-white hover:bg-gray-100 text-navy-800 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${
-              isRTL ? 'right-4' : 'left-4'
+            className={`absolute top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-14 sm:h-14 bg-white/90 hover:bg-white text-navy-800 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 ${
+              isRTL ? 'right-2 sm:right-4' : 'left-2 sm:left-4'
             }`}
-            style={{
-              transform: 'translateY(-50%) translateZ(20px)',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
-            }}
-            onMouseEnter={(e) => {
-              const target = e.target as HTMLButtonElement
-              target.style.transform = 'translateY(-50%) translateZ(25px) scale(1.1)'
-              target.style.boxShadow = '0 15px 40px rgba(0,0,0,0.3)'
-            }}
-            onMouseLeave={(e) => {
-              const target = e.target as HTMLButtonElement
-              target.style.transform = 'translateY(-50%) translateZ(20px) scale(1)'
-              target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)'
-            }}
           >
-            <FaChevronLeft className={`text-2xl ${isRTL ? 'rotate-180' : ''}`} />
+            <FaChevronLeft className={`text-lg sm:text-2xl ${isRTL ? 'rotate-180' : ''}`} />
           </button>
           
           <button
             onClick={nextSlide}
-            className={`absolute top-1/2 transform -translate-y-1/2 z-20 w-16 h-16 bg-white hover:bg-gray-100 text-navy-800 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${
-              isRTL ? 'left-4' : 'right-4'
+            className={`absolute top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-14 sm:h-14 bg-white/90 hover:bg-white text-navy-800 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 ${
+              isRTL ? 'left-2 sm:left-4' : 'right-2 sm:right-4'
             }`}
-            style={{
-              transform: 'translateY(-50%) translateZ(20px)',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
-            }}
-            onMouseEnter={(e) => {
-              const target = e.target as HTMLButtonElement
-              target.style.transform = 'translateY(-50%) translateZ(25px) scale(1.1)'
-              target.style.boxShadow = '0 15px 40px rgba(0,0,0,0.3)'
-            }}
-            onMouseLeave={(e) => {
-              const target = e.target as HTMLButtonElement
-              target.style.transform = 'translateY(-50%) translateZ(20px) scale(1)'
-              target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)'
-            }}
           >
-            <FaChevronRight className={`text-2xl ${isRTL ? 'rotate-180' : ''}`} />
+            <FaChevronRight className={`text-lg sm:text-2xl ${isRTL ? 'rotate-180' : ''}`} />
           </button>
 
           <div className="flex justify-center items-center h-full">
@@ -238,7 +156,7 @@ const Slideshow = () => {
 
               return (
                 <div
-                  key={slide.id}
+                  key={index}
                   className={cardClass}
                   style={{
                     ...cardStyle,
@@ -295,28 +213,6 @@ const Slideshow = () => {
               )
             })}
           </div>
-        </div>
-      </div>
-
-
-      {/* Card Indicators */}
-      <div className="container mx-auto px-4 mt-8">
-        <div className="flex justify-center space-x-4">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? 'bg-navy-800 scale-125'
-                  : 'bg-gray-400 hover:bg-gray-600'
-              }`}
-              style={{
-                transform: index === currentSlide ? 'translateZ(10px)' : 'translateZ(0px)',
-                boxShadow: index === currentSlide ? '0 4px 15px rgba(16, 42, 67, 0.4)' : 'none'
-              }}
-            />
-          ))}
         </div>
       </div>
     </section>
