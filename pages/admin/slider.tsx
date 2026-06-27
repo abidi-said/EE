@@ -90,7 +90,7 @@ export default function AdminSliderPage() {
     if (newSlides.length > 0) {
       const updated = config
         ? { ...config, slides: [...config.slides, ...newSlides] }
-        : { heroVideo: '', slides: newSlides }
+        : { heroVideo: '', heroThumbnail: '', slides: newSlides }
       setConfig(updated)
       await saveConfig(updated)
     }

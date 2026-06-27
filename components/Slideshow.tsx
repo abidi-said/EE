@@ -184,7 +184,6 @@ const Slideshow = () => {
                         e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)'
                       }
                     }}
-                    onClick={() => goToSlide(index)}
                   >
                     {/* Work Project Photo */}
                     <div
