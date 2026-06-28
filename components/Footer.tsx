@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLanguage } from '../contexts/LanguageContext'
@@ -146,15 +147,9 @@ const Footer = () => {
               © {currentYear} Époxy & Étanchéité - By LaMaison.tn. {t('footer.rights')}
             </div>
             <div className="flex space-x-6 text-sm">
-              <a href="#" className="text-gray-400 hover:text-gold-400 transition-colors duration-200">
-                {t('footer.privacy_policy')}
-              </a>
-              <a href="#" className="text-gray-400 hover:text-gold-400 transition-colors duration-200">
-                {t('footer.terms_service')}
-              </a>
-              <a href="#" className="text-gray-400 hover:text-gold-400 transition-colors duration-200">
-                {t('footer.cookie_policy')}
-              </a>
+              <Link href="/legal" className="text-gray-400 hover:text-gold-400 transition-colors duration-200">
+                {t('footer.legal_notice')}
+              </Link>
             </div>
           </div>
         </div>

@@ -1,28 +1,14 @@
 const { i18n } = require('./next-i18next.config')
 
-const isProd = process.env.NODE_ENV === 'production'
-const isDev = process.env.NODE_ENV === 'development'
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
     domains: ['images.unsplash.com', 'via.placeholder.com', 'api.epoxy.tn'],
-    unoptimized: true, // Required for static export
+    unoptimized: true,
   },
-}
-
-// Development configuration
-if (isDev) {
-  nextConfig.i18n = i18n
-}
-
-// Production configuration for static export (Netlify)
-if (isProd) {
-  nextConfig.trailingSlash = true
-  nextConfig.output = 'export'
-  nextConfig.distDir = 'out'
+  i18n,
 }
 
 module.exports = nextConfig

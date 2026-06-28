@@ -371,26 +371,41 @@ export default function PostForm({ postId }: PostFormProps) {
           <div className="bg-white rounded-xl shadow-lg p-6 space-y-5">
             <h2 className="text-lg font-semibold text-navy-800 border-b pb-3">SEO</h2>
 
+            {(form.meta_title || form.meta_description) && (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 max-w-lg">
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Aperçu Google</p>
+                <p className="text-blue-700 text-sm font-medium leading-tight truncate">{form.meta_title || 'Titre de l\'article'}</p>
+                <p className="text-green-700 text-xs mt-0.5">{typeof window !== 'undefined' ? window.location.origin : ''}/blog/{form.title?.toLowerCase().replace(/\s+/g, '-') || 'slug'}</p>
+                <p className="text-gray-600 text-xs mt-0.5 line-clamp-2">{form.meta_description || 'Description de l\'article...'}</p>
+              </div>
+            )}
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Meta Title *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Meta Title *</label>
+              <p className="text-xs text-gray-500 mb-2">Titre affiché dans l&apos;onglet du navigateur et comme lien cliquable dans Google. 50-60 caractères recommandé.</p>
               <input
                 type="text"
                 required
                 value={form.meta_title}
                 onChange={(e) => handleChange('meta_title', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50"
+                placeholder="Ex: Étanchéité Toiture Tunis | Prix et Devis Gratuit | Époxy & Étanchéité"
               />
+              <p className="text-xs text-gray-400 mt-1 text-right">{form.meta_title.length} caractères</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Meta Description *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Meta Description *</label>
+              <p className="text-xs text-gray-500 mb-2">Court résumé (1-2 phrases) qui apparaît sous le titre dans Google. 150-160 caractères recommandé.</p>
               <textarea
                 required
                 rows={2}
                 value={form.meta_description}
                 onChange={(e) => handleChange('meta_description', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50 resize-none"
+                placeholder="Ex: Découvrez nos services d'étanchéité de toiture à Tunis. Devis gratuit et intervention rapide pour protéger votre maison des infiltrations d'eau."
               />
+              <p className="text-xs text-gray-400 mt-1 text-right">{form.meta_description.length} caractères</p>
             </div>
 
             <div>

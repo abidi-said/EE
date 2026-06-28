@@ -69,13 +69,6 @@ export default function AdminLayout({ children, title = 'Administration' }: Admi
                     <span>Articles</span>
                   </Link>
                   <Link
-                    href="/admin/posts/new"
-                    className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-navy-800 transition-colors"
-                  >
-                    <FaPlus className="text-xs" />
-                    <span>Nouvel article</span>
-                  </Link>
-                  <Link
                     href="/admin/video"
                     className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       router.pathname === '/admin/video'
@@ -125,9 +118,6 @@ export default function AdminLayout({ children, title = 'Administration' }: Admi
             <div className="container mx-auto px-4 py-3 space-y-1">
               <Link href="/admin/posts" className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${router.pathname.startsWith('/admin/posts') ? 'bg-navy-900 text-gold-400' : 'text-gray-300 hover:text-white hover:bg-navy-900'}`}>
                 <FaNewspaper className="text-xs" /><span>Articles</span>
-              </Link>
-              <Link href="/admin/posts/new" className="flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-navy-900 transition-colors">
-                <FaPlus className="text-xs" /><span>Nouvel article</span>
               </Link>
               <Link href="/admin/video" className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${router.pathname === '/admin/video' ? 'bg-navy-900 text-gold-400' : 'text-gray-300 hover:text-white hover:bg-navy-900'}`}>
                 <FaVideo className="text-xs" /><span>Vidéo</span>

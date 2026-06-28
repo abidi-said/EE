@@ -7,6 +7,7 @@ import BlogLayout from '../../components/blog/BlogLayout'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { formatDate, getImageUrl, getPost, processBody } from '../../lib/api'
+import { getBaseUrl } from '../../utils/getBaseUrl'
 import type { Post } from '../../types/blog'
 
 interface BlogPostPageProps {
@@ -66,16 +67,65 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
   }
 
   const imageUrl = getImageUrl(post.image)
+  const [baseUrl, setBaseUrl] = useState('')
+
+  useEffect(() => {
+    setBaseUrl(getBaseUrl())
+  }, [])
+
+  const canonical = baseUrl + router.asPath
+  const postTitle = (post.meta_title || post.title) + ' | Époxy & Étanchéité'
+  const postDescription = post.meta_description || post.excerpt
+
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: postDescription,
+    ...(imageUrl ? { image: imageUrl } : {}),
+    datePublished: post.created_at,
+    dateModified: post.updated_at || post.created_at,
+    author: {
+      '@type': 'Organization',
+      name: 'Époxy & Étanchéité',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Époxy & Étanchéité',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${baseUrl}/images/logo/EE-logo.png`,
+      },
+    },
+  }
 
   return (
     <>
       <Head>
-        <title>{(post.meta_title || post.title) + ' | Époxy & Étanchéité'}</title>
-        <meta name="description" content={post.meta_description || post.excerpt} />
+        <title>{postTitle}</title>
+        <meta name="description" content={postDescription} />
         <meta name="keywords" content={post.keywords} />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={canonical} />
         <meta property="og:title" content={post.meta_title || post.title} />
-        <meta property="og:description" content={post.meta_description || post.excerpt} />
+        <meta property="og:description" content={postDescription} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={canonical} />
+        <meta property="og:locale" content="fr_TN" />
+        <meta property="og:site_name" content="Époxy & Étanchéité" />
         {imageUrl && <meta property="og:image" content={imageUrl} />}
+        {imageUrl && <meta property="og:image:width" content="1200" />}
+        {imageUrl && <meta property="og:image:height" content="630" />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post.meta_title || post.title} />
+        <meta name="twitter:description" content={postDescription} />
+        {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+        {baseUrl && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+          />
+        )}
       </Head>
       <div className="min-h-screen flex flex-col bg-white">
         <Header variant="inner" />
