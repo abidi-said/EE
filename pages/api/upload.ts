@@ -41,9 +41,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
   const filepath = path.join(dir, filename)
   fs.writeFileSync(filepath, buffer)
 
-  const host = req.headers.host || 'localhost:3000'
-  const protocol = host.includes('localhost') ? 'http' : 'https'
-  const url = `${protocol}://${host}/uploads/${subfolder}${subfolder ? '/' : ''}${filename}`
+  const url = `/uploads/${subfolder}${subfolder ? '/' : ''}${filename}`
 
   res.status(200).json({ url })
 }
