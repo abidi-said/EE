@@ -27,14 +27,14 @@ export default function Home() {
         <meta name="keywords" content="étanchéité époxy Tunisie, isolation toiture Tunis, revêtement sol industriel, étanchéité sous-sol, étanchéité piscine, entreprise étanchéité Tunis, isolation bâtiment, revêtement garage époxy, étanchéité terrasse, étanchéité entrepôt, sol époxy résistant, étanchéité commercial, étanchéité résidentielle, peinture, résine, résine naturelle, résine époxy, époxy, epoxy, resine, ruban d'étanchéité, étanchéité, toit, bardage, enrobage, plancher, sous-sol, toiture, protection, عزل مائي تونس, إيبوكسي تونس, عزل الأسطح, طلاء الأرضيات, عزل المباني, عزل الخزانات, عزل الحمامات, عزل الأسطح المسطحة, عزل السقف, حماية المباني, طلاء مقاوم للماء, عزل تجاري, عزل سكني, أريانة, تونس, صفاقس, سوسة, المنستير, بنزرت, قابس, LaMaison.tn" />
         
         {/* Canonical URL */}
-        <link rel="canonical" href={baseUrl || 'https://epoxyetancheite.netlify.app/'} />
+        {baseUrl && <link rel="canonical" href={`${baseUrl}/`} />}
         
         {/* Open Graph */}
         <meta property="og:title" content="Étanchéité Époxy Tunisie | Isolation Toiture & Revêtement Sol | LaMaison.tn" />
         <meta property="og:description" content="Entreprise d'étanchéité époxy en Tunisie. Services professionnels d'isolation toiture, revêtement sol industriel, étanchéité sous-sol et piscine. Devis gratuit." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={baseUrl || 'https://epoxyetancheite.netlify.app/'} />
-        <meta property="og:image" content={`${baseUrl || 'https://epoxyetancheite.netlify.app'}/images/slideshow/etancheite-batiment-commercial.png`} />
+        {baseUrl && <meta property="og:url" content={`${baseUrl}/`} />}
+        {baseUrl && <meta property="og:image" content={`${baseUrl}/images/slideshow/etancheite-batiment-commercial.png`} />}
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="fr_TN" />
@@ -44,7 +44,7 @@ export default function Home() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Étanchéité Époxy Tunisie | Isolation Toiture & Revêtement Sol | LaMaison.tn" />
         <meta name="twitter:description" content="Entreprise d'étanchéité époxy en Tunisie. Services professionnels d'isolation toiture, revêtement sol industriel, étanchéité sous-sol et piscine. Devis gratuit." />
-        <meta name="twitter:image" content={`${baseUrl || 'https://epoxyetancheite.netlify.app'}/images/slideshow/etancheite-batiment-commercial.png`} />
+        {baseUrl && <meta name="twitter:image" content={`${baseUrl}/images/slideshow/etancheite-batiment-commercial.png`} />}
         
         {/* Additional SEO */}
         <meta name="robots" content="index, follow" />

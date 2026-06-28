@@ -1,12 +1,11 @@
 export function getBaseUrl(): string {
-  // For client-side
   if (typeof window !== 'undefined') {
     return window.location.origin
   }
-  
-  // For server-side (during build/SSR)
-  // This will be overridden by the actual domain when deployed
-  return 'https://epoxyetancheite.netlify.app'
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL
+  }
+  return ''
 }
 
 export function getDynamicBaseUrl(req?: any): string {
