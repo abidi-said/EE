@@ -183,11 +183,6 @@ export function getImageUrl(image: string | null): string | null {
   if (image.startsWith('data:')) return image
   if (image.startsWith('/tmp/')) return null
   if (image.startsWith('/uploads/')) return image
-  if (image.startsWith('_local_')) return `/uploads/posts/${image}`
-  if (image.includes('localhost') && image.includes('/uploads/')) {
-    const parts = image.split('/uploads')
-    return `/uploads${parts[1]}`
-  }
   if (image.startsWith('http')) return image
   return `https://api.epoxy.tn/storage/${image}`
 }

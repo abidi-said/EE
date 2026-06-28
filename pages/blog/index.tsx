@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import { FaNewspaper } from 'react-icons/fa'
 import BlogLayout from '../../components/blog/BlogLayout'
 import BlogCard from '../../components/blog/BlogCard'
@@ -5,9 +7,10 @@ import type { Post } from '../../types/blog'
 
 interface BlogIndexPageProps {
   initialPosts: Post[]
+  localImages: Record<string, string>
 }
 
-export default function BlogIndexPage({ initialPosts }: BlogIndexPageProps) {
+export default function BlogIndexPage({ initialPosts, localImages }: BlogIndexPageProps) {
   return (
     <BlogLayout
       title="Blog"
@@ -33,7 +36,7 @@ export default function BlogIndexPage({ initialPosts }: BlogIndexPageProps) {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {initialPosts.map((post) => (
-                <BlogCard key={post.id} post={post} />
+                <BlogCard key={post.id} post={post} localImage={localImages[post.id]} />
               ))}
             </div>
           )}
@@ -49,8 +52,15 @@ export async function getStaticProps() {
     const res = await fetch(`${baseUrl}/posts`)
     const json = await res.json()
     const posts: Post[] = (json.posts?.data || []).filter((p: Post) => p.is_published)
-    return { props: { initialPosts: posts } }
+
+    let localImages: Record<string, string> = {}
+    try {
+      const mapPath = path.join(process.cwd(), 'data', 'post-images.json')
+      localImages = JSON.parse(fs.readFileSync(mapPath, 'utf-8'))
+    } catch {}
+
+    return { props: { initialPosts: posts, localImages } }
   } catch {
-    return { props: { initialPosts: [] } }
+    return { props: { initialPosts: [], localImages: {} } }
   }
 }

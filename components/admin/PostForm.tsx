@@ -34,8 +34,11 @@ export default function PostForm({ postId }: PostFormProps) {
 
   useEffect(() => {
     if (!postId) return
-    getPost(postId)
-      .then((post) => {
+    Promise.all([
+      getPost(postId),
+      fetch(`/api/post-image?id=${postId}`).then(r => r.json()),
+    ])
+      .then(([post, localImg]) => {
         setForm({
           title: post.title,
           body: post.body,
@@ -46,7 +49,7 @@ export default function PostForm({ postId }: PostFormProps) {
           is_published: !!post.is_published,
           image: null,
         })
-        setExistingImage(getImageUrl(post.image))
+        setExistingImage(localImg.imagePath || getImageUrl(post.image))
       })
       .catch(() => setError('Impossible de charger l\'article'))
       .finally(() => setLoading(false))
@@ -208,15 +211,30 @@ export default function PostForm({ postId }: PostFormProps) {
     setSuccess('')
     try {
       const fields = { ...form }
+      let localImage: string | null = null
       if (fields.image && fields.image.startsWith('data:')) {
-        const localPath = await uploadToLocal(fields.image)
-        fields.image = localPath.split('/').pop() || localPath
+        localImage = await uploadToLocal(fields.image)
+        fields.image = undefined
       }
       let result
       if (isEdit && postId) {
         result = await updatePost(postId, fields)
+        if (localImage) {
+          await fetch('/api/post-image', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ postId, imagePath: localImage }),
+          }).catch(() => {})
+        }
       } else {
         result = await createPost(fields)
+        if (localImage && result?.id) {
+          await fetch('/api/post-image', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ postId: result.id, imagePath: localImage }),
+          }).catch(() => {})
+        }
       }
       setSuccess(result.is_published ? 'Article publié avec succès!' : 'Article enregistré (brouillon)')
     } catch (err) {

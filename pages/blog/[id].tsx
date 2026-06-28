@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Head from 'next/head'
+import fs from 'fs'
+import path from 'path'
 import { FaCalendar, FaArrowLeft, FaTag } from 'react-icons/fa'
 import BlogLayout from '../../components/blog/BlogLayout'
 import Header from '../../components/Header'
@@ -12,9 +14,10 @@ import type { Post } from '../../types/blog'
 
 interface BlogPostPageProps {
   initialPost?: Post | null
+  localImage?: string | null
 }
 
-export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
+export default function BlogPostPage({ initialPost, localImage }: BlogPostPageProps) {
   const router = useRouter()
   const { id } = router.query
   const [post, setPost] = useState<Post | null>(initialPost ?? null)
@@ -66,7 +69,7 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
     )
   }
 
-  const imageUrl = getImageUrl(post.image)
+  const imageUrl = localImage || getImageUrl(post.image)
   const [baseUrl, setBaseUrl] = useState('')
 
   useEffect(() => {
@@ -224,7 +227,15 @@ export async function getStaticProps({ params }: { params: { id: string } }) {
     const json = await res.json()
     const post: Post = json.post
     if (!post || !post.is_published) return { notFound: true }
-    return { props: { initialPost: post } }
+
+    let localImage: string | null = null
+    try {
+      const mapPath = path.join(process.cwd(), 'data', 'post-images.json')
+      const map = JSON.parse(fs.readFileSync(mapPath, 'utf-8'))
+      localImage = map[String(post.id)] || null
+    } catch {}
+
+    return { props: { initialPost: post, localImage } }
   } catch {
     return { notFound: true }
   }

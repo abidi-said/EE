@@ -7,13 +7,20 @@ import type { Post } from '../../../types/blog'
 
 export default function AdminPostsPage() {
   const [posts, setPosts] = useState<Post[]>([])
+  const [localImages, setLocalImages] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<number | null>(null)
 
   const loadPosts = () => {
     setLoading(true)
-    getAdminPosts()
-      .then((data) => setPosts(data.data))
+    Promise.all([
+      getAdminPosts(),
+      fetch('/api/post-image').then(r => r.json()).catch(() => ({})),
+    ])
+      .then(([data, localMap]) => {
+        setPosts(data.data)
+        setLocalImages(localMap)
+      })
       .catch(() => setPosts([]))
       .finally(() => setLoading(false))
   }
@@ -25,6 +32,11 @@ export default function AdminPostsPage() {
     setDeleting(id)
     try {
       await deletePost(id)
+      await fetch('/api/post-image', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId: id }),
+      }).catch(() => {})
       setPosts((prev) => prev.filter((p) => p.id !== id))
     } catch {
       alert('Erreur lors de la suppression')
@@ -84,11 +96,14 @@ export default function AdminPostsPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                          {getImageUrl(post.image) ? (
-                            <img src={getImageUrl(post.image)!} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">—</div>
-                          )}
+                          {(() => {
+                            const src = localImages[post.id] || getImageUrl(post.image)
+                            return src ? (
+                              <img src={src} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">—</div>
+                            )
+                          })()}
                         </div>
                         <div>
                           <p className="font-medium text-navy-900 line-clamp-1">{post.title}</p>

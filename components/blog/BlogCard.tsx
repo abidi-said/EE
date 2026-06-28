@@ -5,10 +5,11 @@ import type { Post } from '../../types/blog'
 
 interface BlogCardProps {
   post: Post
+  localImage?: string | null
 }
 
-export default function BlogCard({ post }: BlogCardProps) {
-  const imageUrl = getImageUrl(post.image)
+export default function BlogCard({ post, localImage }: BlogCardProps) {
+  const imageUrl = localImage || getImageUrl(post.image)
 
   return (
     <article className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group">
