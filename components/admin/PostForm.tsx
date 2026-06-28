@@ -210,7 +210,7 @@ export default function PostForm({ postId }: PostFormProps) {
       const fields = { ...form }
       if (fields.image && fields.image.startsWith('data:')) {
         const localPath = await uploadToLocal(fields.image)
-        fields.image = 'local' + localPath.replace('/uploads', '')
+        fields.image = localPath.split('/').pop() || localPath
       }
       let result
       if (isEdit && postId) {

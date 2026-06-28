@@ -30,7 +30,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
   const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1]
   const data = matches[2]
   const buffer = Buffer.from(data, 'base64')
-  const filename = `${Date.now()}.${ext}`
+  const prefix = typeof folder === 'string' && folder === 'posts' ? '_local_' : ''
+  const filename = `${prefix}${Date.now()}.${ext}`
   const subfolder = typeof folder === 'string' ? folder : ''
   const dir = path.join(process.cwd(), 'public', 'uploads', subfolder)
 
