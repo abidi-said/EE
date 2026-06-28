@@ -180,10 +180,15 @@ export async function deletePost(id: string | number): Promise<void> {
 
 export function getImageUrl(image: string | null): string | null {
   if (!image) return null
-  if (image.startsWith('http')) return image
   if (image.startsWith('data:')) return image
   if (image.startsWith('/tmp/')) return null
   if (image.startsWith('/uploads/')) return image
+  if (image.startsWith('local/')) return '/' + image.replace('local/', 'uploads/')
+  if (image.includes('localhost') && image.includes('/uploads/')) {
+    const parts = image.split('/uploads')
+    return `/uploads${parts[1]}`
+  }
+  if (image.startsWith('http')) return image
   return `https://api.epoxy.tn/storage/${image}`
 }
 

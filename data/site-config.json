@@ -1,6 +1,6 @@
 {
   "heroVideo": "/uploads/video/hero.mp4",
-  "heroThumbnail": "http://localhost:3000/uploads/thumbnail/1782600362571.jpg",
+  "heroThumbnail": "/uploads/thumbnail/1782658795667.jpg",
   "slides": [
     {
       "image": "http://localhost:3000/uploads/slider/1782601036494.jpg",
