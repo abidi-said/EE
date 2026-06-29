@@ -97,7 +97,8 @@ export default function AdminPostsPage() {
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                           {(() => {
-                            const src = localImages[post.id] || getImageUrl(post.image)
+                            const raw = localImages[post.id]
+                            const src = raw && !raw.startsWith('<') ? raw : getImageUrl(post.image) || raw?.match(/src="([^"]+)"/)?.[1]
                             return src ? (
                               <img src={src} alt="" className="w-full h-full object-cover" />
                             ) : (

@@ -1,10 +1,18 @@
 import { useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/router'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { uploadToLocal } from '../../lib/api'
 import { FaUpload, FaPlay, FaCheck, FaTimes, FaSpinner } from 'react-icons/fa'
 import type { SiteConfig } from '../api/site-config'
 
+const STATIC_MODE = typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_STATIC_MODE === 'true'
+
 export default function AdminVideoPage() {
+  const router = useRouter()
+  useEffect(() => {
+    if (STATIC_MODE) router.replace('/admin/posts')
+  }, [])
+  if (STATIC_MODE) return null
   const [config, setConfig] = useState<SiteConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState<'video' | 'thumbnail' | null>(null)

@@ -30,9 +30,13 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method === 'PUT') {
     const { postId, imagePath } = req.body
-    if (!postId || !imagePath) return res.status(400).json({ error: 'Missing postId or imagePath' })
+    if (!postId) return res.status(400).json({ error: 'Missing postId' })
     const map = readMap()
-    map[String(postId)] = imagePath
+    if (imagePath) {
+      map[String(postId)] = imagePath
+    } else {
+      delete map[String(postId)]
+    }
     writeMap(map)
     return res.status(200).json({ success: true })
   }

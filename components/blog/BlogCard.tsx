@@ -9,15 +9,17 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ post, localImage }: BlogCardProps) {
-  const imageUrl = localImage || getImageUrl(post.image)
+  const imageUrl = localImage && !localImage.startsWith('<') ? localImage : getImageUrl(post.image)
+  const imageMarkup = localImage?.startsWith('<') ? localImage : null
+  const imageSrc = imageMarkup ? imageMarkup.match(/src="([^"]+)"/)?.[1] : imageUrl
 
   return (
     <article className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group">
       <Link href={`/blog/${post.id}`}>
         <div className="aspect-video bg-navy-100 overflow-hidden">
-          {imageUrl ? (
+          {imageSrc ? (
             <img
-              src={imageUrl}
+              src={imageSrc}
               alt={post.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />

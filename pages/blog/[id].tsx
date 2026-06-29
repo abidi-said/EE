@@ -69,7 +69,8 @@ export default function BlogPostPage({ initialPost, localImage }: BlogPostPagePr
     )
   }
 
-  const imageUrl = localImage || getImageUrl(post.image)
+  const imageUrl = localImage && !localImage.startsWith('<') ? localImage : getImageUrl(post.image)
+  const imageMarkup = localImage?.startsWith('<') ? localImage : null
   const [baseUrl, setBaseUrl] = useState('')
 
   useEffect(() => {
@@ -154,11 +155,15 @@ export default function BlogPostPage({ initialPost, localImage }: BlogPostPagePr
                 <p className="text-xl text-gray-600 leading-relaxed">{post.excerpt}</p>
               </header>
 
-              {imageUrl && (
+              {imageMarkup ? (
+                <div className="rounded-2xl overflow-hidden shadow-xl mb-10 bg-gray-100">
+                  <div className="[&_img]:w-full [&_img]:h-auto [&_img]:object-cover [&_img]:max-h-[32rem]" dangerouslySetInnerHTML={{ __html: imageMarkup }} />
+                </div>
+              ) : imageUrl ? (
                 <div className="rounded-2xl overflow-hidden shadow-xl mb-10 aspect-video">
                   <img src={imageUrl} alt={post.title} className="w-full h-full object-cover" />
                 </div>
-              )}
+              ) : null}
 
               <div
                 className="prose prose-lg max-w-none"

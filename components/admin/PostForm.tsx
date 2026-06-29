@@ -6,6 +6,8 @@ import AdminLayout from './AdminLayout'
 import { createPost, getPost, getImageUrl, updatePost, uploadToLocal, processBody } from '../../lib/api'
 import type { PostFormData } from '../../types/blog'
 
+const STATIC_MODE = typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_STATIC_MODE === 'true'
+
 interface PostFormProps {
   postId?: string
 }
@@ -17,7 +19,7 @@ const emptyForm: PostFormData = {
   meta_title: '',
   meta_description: '',
   keywords: '',
-  is_published: false,
+  is_published: true,
   image: null,
 }
 
@@ -49,7 +51,16 @@ export default function PostForm({ postId }: PostFormProps) {
           is_published: !!post.is_published,
           image: null,
         })
-        setExistingImage(localImg.imagePath || getImageUrl(post.image))
+        const imgPath = localImg.imagePath || getImageUrl(post.image)
+        setExistingImage(imgPath)
+        if (imgPath && imgPath.startsWith('<')) {
+          setImgSrc(imgPath.match(/src="([^"]+)"/)?.[1] || '')
+          setImgAlt(imgPath.match(/alt="([^"]+)"/)?.[1] || '')
+          setImgWidth(imgPath.match(/width="([^"]+)"/)?.[1] || '800')
+          setImgHeight(imgPath.match(/height="([^"]+)"/)?.[1] || '450')
+        } else if (imgPath) {
+          setImgSrc(imgPath)
+        }
       })
       .catch(() => setError('Impossible de charger l\'article'))
       .finally(() => setLoading(false))
@@ -94,6 +105,10 @@ export default function PostForm({ postId }: PostFormProps) {
 
   const [showPreview, setShowPreview] = useState(false)
   const [fileError, setFileError] = useState('')
+  const [imgSrc, setImgSrc] = useState('')
+  const [imgAlt, setImgAlt] = useState('')
+  const [imgWidth, setImgWidth] = useState('800')
+  const [imgHeight, setImgHeight] = useState('450')
 
   const prependToLine = (prefix: string) => {
     const el = bodyRef.current
@@ -184,6 +199,21 @@ export default function PostForm({ postId }: PostFormProps) {
     }
   }
 
+  const insertBodyImageMarkup = () => {
+    const el = bodyRef.current
+    if (!el) return
+    const start = el.selectionStart
+    const end = el.selectionEnd
+    const text = form.body
+    const imgTag = '<img src="" alt="" width="800" height="450" />'
+    const newBody = text.substring(0, start) + imgTag + text.substring(end)
+    setForm((prev) => ({ ...prev, body: newBody }))
+    requestAnimationFrame(() => {
+      el.focus()
+      el.setSelectionRange(start + 10, start + 10)
+    })
+  }
+
   const handleImageChange = (file: File | null) => {
     setFileError('')
     if (file) {
@@ -212,27 +242,35 @@ export default function PostForm({ postId }: PostFormProps) {
     try {
       const fields = { ...form }
       let localImage: string | null = null
-      if (fields.image && fields.image.startsWith('data:')) {
-        localImage = await uploadToLocal(fields.image)
+      if (STATIC_MODE) {
+        if (imgSrc) {
+          localImage = `<img src="${imgSrc}" alt="${imgAlt}" width="${imgWidth}" height="${imgHeight}" />`
+        } else {
+          localImage = null
+        }
         fields.image = undefined
+      } else {
+        if (fields.image && fields.image.startsWith('data:')) {
+          localImage = await uploadToLocal(fields.image)
+          fields.image = undefined
+        }
       }
       let result
       if (isEdit && postId) {
         result = await updatePost(postId, fields)
-        if (localImage) {
-          await fetch('/api/post-image', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ postId, imagePath: localImage }),
-          }).catch(() => {})
-        }
+        await fetch('/api/post-image', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ postId, imagePath: localImage }),
+        }).catch(() => {})
       } else {
         result = await createPost(fields)
-        if (localImage && result?.id) {
+        const imagePostId = result?.id
+        if (imagePostId) {
           await fetch('/api/post-image', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ postId: result.id, imagePath: localImage }),
+            body: JSON.stringify({ postId: imagePostId, imagePath: localImage }),
           }).catch(() => {})
         }
       }
@@ -320,21 +358,26 @@ export default function PostForm({ postId }: PostFormProps) {
                 <button type="button" onClick={() => formatText('<div style="text-align: right;">', '</div>')} className="px-3 py-1.5 bg-white rounded hover:bg-gold-100 text-sm transition-colors" title="Aligné à droite"><FaAlignRight /></button>
                 <span className="w-px h-6 bg-gray-300 mx-1 self-center" />
                 <button type="button" onClick={() => formatText('<blockquote><p>', '</p></blockquote>')} className="px-3 py-1.5 bg-white rounded hover:bg-gold-100 text-sm transition-colors" title="Citation"><FaQuoteLeft /></button>
-                <button type="button" onClick={() => bodyImageRef.current?.click()} disabled={bodyImageUploading} className="px-3 py-1.5 bg-white rounded hover:bg-gold-100 text-sm transition-colors" title="Insérer une image"><FaImage /></button>
+                {!STATIC_MODE && (
+                  <button type="button" onClick={() => bodyImageRef.current?.click()} disabled={bodyImageUploading} className="px-3 py-1.5 bg-white rounded hover:bg-gold-100 text-sm transition-colors" title="Insérer une image (upload)"><FaImage /></button>
+                )}
+                <button type="button" onClick={insertBodyImageMarkup} className="px-3 py-1.5 bg-white rounded hover:bg-gold-100 text-sm font-mono transition-colors" title="Insérer une image (markup)">&lt;IMG&gt;</button>
                 <span className="w-px h-6 bg-gray-300 mx-1 self-center" />
                 <button type="button" onClick={() => setShowPreview(!showPreview)} className={`px-3 py-1.5 rounded text-sm transition-colors ${showPreview ? 'bg-gold-500 text-white' : 'bg-white hover:bg-gold-100'}`} title="Aperçu">{showPreview ? <FaCode /> : <FaEye />}</button>
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                ref={bodyImageRef}
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  if (file) insertBodyImage(file)
-                  e.target.value = ''
-                }}
-              />
+              {!STATIC_MODE && (
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={bodyImageRef}
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) insertBodyImage(file)
+                    e.target.value = ''
+                  }}
+                />
+              )}
               {showPreview ? (
                 <div className="prose prose-lg max-w-none p-6 border border-gray-300 rounded-lg bg-white min-h-[200px] overflow-auto" dangerouslySetInnerHTML={{ __html: processBody(form.body) }} />
               ) : (
@@ -352,28 +395,56 @@ export default function PostForm({ postId }: PostFormProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
-              <div className="flex items-start space-x-4">
-                {(preview || existingImage) && (
-                  <div className="w-32 h-32 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                    <img src={preview || existingImage!} alt="Preview" className="w-full h-full object-cover" />
-                  </div>
-                )}
-                <div className="flex-1">
-                  {fileError && (
-                    <p className="text-red-600 text-sm mb-2">{fileError}</p>
+              {STATIC_MODE ? (
+                <div className="space-y-3">
+                  {imgSrc && (
+                    <div className="w-52 rounded-lg overflow-hidden bg-gray-100 border">
+                      <img src={imgSrc} alt={imgAlt} width={parseInt(imgWidth)} height={parseInt(imgHeight)} className="w-full object-cover" style={{ maxHeight: '12rem' }} />
+                    </div>
                   )}
-                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-gold-500 hover:bg-gold-50 transition-colors">
-                  <FaImage className="text-2xl text-gray-400 mb-2" />
-                  <span className="text-sm text-gray-500">Cliquez pour choisir une image</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
-                  />
-                </label>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">URL de l&apos;image *</label>
+                    <input type="url" value={imgSrc} onChange={e => setImgSrc(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" placeholder="https://..." />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Texte alternatif (alt)</label>
+                    <input type="text" value={imgAlt} onChange={e => setImgAlt(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" placeholder="Description de l'image" />
+                  </div>
+                  <div className="flex space-x-4">
+                    <div className="flex-1">
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Largeur</label>
+                      <input type="number" value={imgWidth} onChange={e => setImgWidth(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Hauteur</label>
+                      <input type="number" value={imgHeight} onChange={e => setImgHeight(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start space-x-4">
+                  {(preview || existingImage) && (
+                    <div className="w-32 h-32 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                      <img src={preview || existingImage!} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    {fileError && (
+                      <p className="text-red-600 text-sm mb-2">{fileError}</p>
+                    )}
+                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-gold-500 hover:bg-gold-50 transition-colors">
+                    <FaImage className="text-2xl text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-500">Cliquez pour choisir une image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
+                    />
+                  </label>
+                </div>
               </div>
-            </div>
+              )}
             </div>
 
             <label className="flex items-center space-x-3 cursor-pointer">

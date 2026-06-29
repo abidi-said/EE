@@ -5,6 +5,8 @@ import { useRouter } from 'next/router'
 import { FaSignOutAlt, FaNewspaper, FaPlus, FaVideo, FaImages, FaBars, FaTimes } from 'react-icons/fa'
 import { useAuth } from '../../contexts/AuthContext'
 
+const STATIC_MODE = typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_STATIC_MODE === 'true'
+
 interface AdminLayoutProps {
   children: ReactNode
   title?: string
@@ -68,28 +70,32 @@ export default function AdminLayout({ children, title = 'Administration' }: Admi
                     <FaNewspaper className="text-xs" />
                     <span>Articles</span>
                   </Link>
-                  <Link
-                    href="/admin/video"
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      router.pathname === '/admin/video'
-                        ? 'bg-navy-800 text-gold-400'
-                        : 'text-gray-300 hover:text-white hover:bg-navy-800'
-                    }`}
-                  >
-                    <FaVideo className="text-xs" />
-                    <span>Vidéo</span>
-                  </Link>
-                  <Link
-                    href="/admin/slider"
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      router.pathname === '/admin/slider'
-                        ? 'bg-navy-800 text-gold-400'
-                        : 'text-gray-300 hover:text-white hover:bg-navy-800'
-                    }`}
-                  >
-                    <FaImages className="text-xs" />
-                    <span>Slider</span>
-                  </Link>
+                  {!STATIC_MODE && (
+                    <Link
+                      href="/admin/video"
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        router.pathname === '/admin/video'
+                          ? 'bg-navy-800 text-gold-400'
+                          : 'text-gray-300 hover:text-white hover:bg-navy-800'
+                      }`}
+                    >
+                      <FaVideo className="text-xs" />
+                      <span>Vidéo</span>
+                    </Link>
+                  )}
+                  {!STATIC_MODE && (
+                    <Link
+                      href="/admin/slider"
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        router.pathname === '/admin/slider'
+                          ? 'bg-navy-800 text-gold-400'
+                          : 'text-gray-300 hover:text-white hover:bg-navy-800'
+                      }`}
+                    >
+                      <FaImages className="text-xs" />
+                      <span>Slider</span>
+                    </Link>
+                  )}
                 </nav>
               </div>
               <div className="flex items-center space-x-4">
@@ -119,12 +125,16 @@ export default function AdminLayout({ children, title = 'Administration' }: Admi
               <Link href="/admin/posts" className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${router.pathname.startsWith('/admin/posts') ? 'bg-navy-900 text-gold-400' : 'text-gray-300 hover:text-white hover:bg-navy-900'}`}>
                 <FaNewspaper className="text-xs" /><span>Articles</span>
               </Link>
-              <Link href="/admin/video" className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${router.pathname === '/admin/video' ? 'bg-navy-900 text-gold-400' : 'text-gray-300 hover:text-white hover:bg-navy-900'}`}>
-                <FaVideo className="text-xs" /><span>Vidéo</span>
-              </Link>
-              <Link href="/admin/slider" className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${router.pathname === '/admin/slider' ? 'bg-navy-900 text-gold-400' : 'text-gray-300 hover:text-white hover:bg-navy-900'}`}>
-                <FaImages className="text-xs" /><span>Slider</span>
-              </Link>
+              {!STATIC_MODE && (
+                <Link href="/admin/video" className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${router.pathname === '/admin/video' ? 'bg-navy-900 text-gold-400' : 'text-gray-300 hover:text-white hover:bg-navy-900'}`}>
+                  <FaVideo className="text-xs" /><span>Vidéo</span>
+                </Link>
+              )}
+              {!STATIC_MODE && (
+                <Link href="/admin/slider" className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${router.pathname === '/admin/slider' ? 'bg-navy-900 text-gold-400' : 'text-gray-300 hover:text-white hover:bg-navy-900'}`}>
+                  <FaImages className="text-xs" /><span>Slider</span>
+                </Link>
+              )}
               <div className="border-t border-navy-700 pt-2 mt-2">
                 <button
                   onClick={() => { setMobileMenuOpen(false); logout(); router.push('/admin/login') }}
