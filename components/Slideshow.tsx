@@ -3,14 +3,30 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLanguage } from '../contexts/LanguageContext'
 
+const STATIC_MODE = typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_STATIC_MODE === 'true'
+
+const STATIC_SLIDES = [
+  { image: '/images/slideshow/etancheite-batiment-commercial.png', title: 'Étanchéité Bâtiment Commercial', location: 'Tunis' },
+  { image: '/images/slideshow/sols-epoxy-entrepot.png', title: 'Sols Époxy Entrepôt', location: 'Ariana' },
+  { image: '/images/slideshow/sols-epoxy-industriel.png', title: 'Sols Époxy Industriel', location: 'Ben Arous' },
+  { image: '/images/slideshow/etancheite-toiture-commerciale.png', title: 'Étanchéité Toiture Commerciale', location: 'Tunis' },
+  { image: '/images/slideshow/revetement-epoxy-industriel.png', title: 'Revêtement Époxy Industriel', location: 'Sfax' },
+  { image: '/images/slideshow/protection-murale-exterieure.png', title: 'Protection Murale Extérieure', location: 'Nabeul' },
+  { image: '/images/slideshow/etancheite-terrasse.png', title: 'Étanchéité Terrasse', location: 'La Marsa' },
+  { image: '/images/slideshow/revetement-toiture-plate.png', title: 'Revêtement Toiture Plate', location: 'Sousse' },
+  { image: '/images/slideshow/etancheite-residentiel.png', title: 'Étanchéité Résidentiel', location: 'Bizerte' },
+  { image: '/images/slideshow/isolation-sous-sol-residentiel.png', title: 'Isolation Sous-Sol Résidentiel', location: 'Ariana' },
+]
+
 const Slideshow = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [slides, setSlides] = useState<{ image: string; title: string; location: string }[]>([])
-  const [loaded, setLoaded] = useState(false)
+  const [loaded, setLoaded] = useState(STATIC_MODE)
   const { t } = useTranslation()
   const { isRTL } = useLanguage()
 
   useEffect(() => {
+    if (STATIC_MODE) { setSlides(STATIC_SLIDES); return }
     fetch('/api/site-config')
       .then((r) => r.json())
       .then((config) => {

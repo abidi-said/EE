@@ -12,7 +12,7 @@ interface SlideConfig {
 const Hero = () => {
   const [isVideoOpen, setIsVideoOpen] = useState(false)
   const [videoSrc, setVideoSrc] = useState('/uploads/video/hero.mp4')
-  const [thumbnail, setThumbnail] = useState('/uploads/slider/etancheite-batiment-commercial.png')
+  const [thumbnail, setThumbnail] = useState('/images/slideshow/etancheite-batiment-commercial.png')
   const { t } = useTranslation()
   const { isRTL } = useLanguage()
 

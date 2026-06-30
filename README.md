@@ -87,7 +87,7 @@ Update the following files with your company details:
 ### Other Platforms
 ```bash
 npm run build
-npm start
+npm run dev
 ```
 
 ## SEO Features

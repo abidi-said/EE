@@ -1,8 +1,9 @@
-import { FormEvent, useState, useEffect, useRef } from 'react'
+import { FormEvent, useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { FaSave, FaArrowLeft, FaImage, FaBold, FaItalic, FaHeading, FaListUl, FaListOl, FaLink, FaQuoteLeft, FaEye, FaCode, FaAlignLeft, FaAlignCenter, FaAlignRight } from 'react-icons/fa'
 import AdminLayout from './AdminLayout'
+import Toast from './Toast'
 import { createPost, getPost, getImageUrl, updatePost, uploadToLocal, processBody } from '../../lib/api'
 import type { PostFormData } from '../../types/blog'
 
@@ -31,19 +32,33 @@ export default function PostForm({ postId }: PostFormProps) {
   const [preview, setPreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const closeToast = useCallback(() => setToast(null), [])
 
   useEffect(() => {
     if (!postId) return
-    Promise.all([
-      getPost(postId),
-      fetch(`/api/post-image?id=${postId}`).then(r => r.json()),
-    ])
-      .then(([post, localImg]) => {
+    getPost(postId)
+      .then((post) => {
+        const body = post.body || ''
+        let cleanBody = body
+        {
+          const m = body.match(/^<div class="featured-image"><img src="([^"]*)"[^>]*><\/div>/)
+          if (m) {
+            const allAttrs = m[0]
+            const srcMatch = allAttrs.match(/src="([^"]*)"/)
+            const altMatch = allAttrs.match(/alt="([^"]*)"/)
+            const widthMatch = allAttrs.match(/width="([^"]*)"/)
+            const heightMatch = allAttrs.match(/height="([^"]*)"/)
+            setImgSrc(srcMatch?.[1] || '')
+            setImgAlt(altMatch?.[1] || '')
+            setImgWidth(widthMatch?.[1] || '800')
+            setImgHeight(heightMatch?.[1] || '450')
+            cleanBody = body.replace(m[0], '').replace(/^\n+/, '')
+          }
+        }
         setForm({
           title: post.title,
-          body: post.body,
+          body: cleanBody,
           excerpt: post.excerpt,
           meta_title: post.meta_title,
           meta_description: post.meta_description,
@@ -51,18 +66,9 @@ export default function PostForm({ postId }: PostFormProps) {
           is_published: !!post.is_published,
           image: null,
         })
-        const imgPath = localImg.imagePath || getImageUrl(post.image)
-        setExistingImage(imgPath)
-        if (imgPath && imgPath.startsWith('<')) {
-          setImgSrc(imgPath.match(/src="([^"]+)"/)?.[1] || '')
-          setImgAlt(imgPath.match(/alt="([^"]+)"/)?.[1] || '')
-          setImgWidth(imgPath.match(/width="([^"]+)"/)?.[1] || '800')
-          setImgHeight(imgPath.match(/height="([^"]+)"/)?.[1] || '450')
-        } else if (imgPath) {
-          setImgSrc(imgPath)
-        }
+        setExistingImage(getImageUrl(post.image))
       })
-      .catch(() => setError('Impossible de charger l\'article'))
+      .catch(() => setToast({ type: 'error', message: 'Impossible de charger l\'article' }))
       .finally(() => setLoading(false))
   }, [postId])
 
@@ -237,46 +243,23 @@ export default function PostForm({ postId }: PostFormProps) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setSaving(true)
-    setError('')
-    setSuccess('')
+    setToast(null)
     try {
       const fields = { ...form }
-      let localImage: string | null = null
-      if (STATIC_MODE) {
-        if (imgSrc) {
-          localImage = `<img src="${imgSrc}" alt="${imgAlt}" width="${imgWidth}" height="${imgHeight}" />`
-        } else {
-          localImage = null
-        }
-        fields.image = undefined
-      } else {
-        if (fields.image && fields.image.startsWith('data:')) {
-          localImage = await uploadToLocal(fields.image)
-          fields.image = undefined
-        }
+      if (imgSrc) {
+        const cleanBody = (fields.body || '').replace(/^<div class="featured-image">.*?<\/div>/, '').replace(/^\n+/, '')
+        fields.body = `<div class="featured-image"><img src="${imgSrc}" alt="${imgAlt}" width="${imgWidth}" height="${imgHeight}" /></div>\n\n` + cleanBody
       }
+      fields.image = undefined
       let result
       if (isEdit && postId) {
         result = await updatePost(postId, fields)
-        await fetch('/api/post-image', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ postId, imagePath: localImage }),
-        }).catch(() => {})
       } else {
         result = await createPost(fields)
-        const imagePostId = result?.id
-        if (imagePostId) {
-          await fetch('/api/post-image', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ postId: imagePostId, imagePath: localImage }),
-          }).catch(() => {})
-        }
       }
-      setSuccess(result.is_published ? 'Article publié avec succès!' : 'Article enregistré (brouillon)')
+      setToast({ type: 'success', message: result.is_published ? 'Article publié avec succès!' : 'Article enregistré (brouillon)' })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de l\'enregistrement')
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Erreur lors de l\'enregistrement' })
     } finally {
       setSaving(false)
     }
@@ -304,17 +287,9 @@ export default function PostForm({ postId }: PostFormProps) {
           </h1>
         </div>
 
+        {toast && <Toast type={toast.type} message={toast.message} onClose={closeToast} />}
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          {success && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
-              {success}
-            </div>
-          )}
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
 
           <div className="bg-white rounded-xl shadow-lg p-6 space-y-5">
             <h2 className="text-lg font-semibold text-navy-800 border-b pb-3">Contenu</h2>
@@ -379,7 +354,7 @@ export default function PostForm({ postId }: PostFormProps) {
                 />
               )}
               {showPreview ? (
-                <div className="prose prose-lg max-w-none p-6 border border-gray-300 rounded-lg bg-white min-h-[200px] overflow-auto" dangerouslySetInnerHTML={{ __html: processBody(form.body) }} />
+                <div className="prose prose-lg max-w-none p-6 border border-gray-300 rounded-lg bg-white min-h-[200px] overflow-auto" dangerouslySetInnerHTML={{ __html: processBody(form.body || '') }} />
               ) : (
                 <textarea
                   ref={bodyRef}
@@ -394,57 +369,33 @@ export default function PostForm({ postId }: PostFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
-              {STATIC_MODE ? (
-                <div className="space-y-3">
-                  {imgSrc && (
-                    <div className="w-52 rounded-lg overflow-hidden bg-gray-100 border">
-                      <img src={imgSrc} alt={imgAlt} width={parseInt(imgWidth)} height={parseInt(imgHeight)} className="w-full object-cover" style={{ maxHeight: '12rem' }} />
-                    </div>
-                  )}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">URL de l&apos;image *</label>
-                    <input type="url" value={imgSrc} onChange={e => setImgSrc(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" placeholder="https://..." />
+              <label className="block text-sm font-medium text-gray-700 mb-2">Image de couverture</label>
+              <div className="space-y-3">
+                {imgSrc && (
+                  <div className="w-52 rounded-lg overflow-hidden bg-gray-100 border">
+                    <img src={imgSrc} alt={imgAlt} width={parseInt(imgWidth)} height={parseInt(imgHeight)} className="w-full object-cover" style={{ maxHeight: '12rem' }} />
                   </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Texte alternatif (alt)</label>
-                    <input type="text" value={imgAlt} onChange={e => setImgAlt(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" placeholder="Description de l'image" />
-                  </div>
-                  <div className="flex space-x-4">
-                    <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Largeur</label>
-                      <input type="number" value={imgWidth} onChange={e => setImgWidth(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" />
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Hauteur</label>
-                      <input type="number" value={imgHeight} onChange={e => setImgHeight(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" />
-                    </div>
-                  </div>
+                )}
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">URL de l&apos;image *</label>
+                  <input type="url" value={imgSrc} onChange={e => setImgSrc(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" placeholder="https://..." />
                 </div>
-              ) : (
-                <div className="flex items-start space-x-4">
-                  {(preview || existingImage) && (
-                    <div className="w-32 h-32 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                      <img src={preview || existingImage!} alt="Preview" className="w-full h-full object-cover" />
-                    </div>
-                  )}
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Texte alternatif (alt)</label>
+                  <input type="text" value={imgAlt} onChange={e => setImgAlt(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" placeholder="Description de l'image" />
+                </div>
+                <div className="flex space-x-4">
                   <div className="flex-1">
-                    {fileError && (
-                      <p className="text-red-600 text-sm mb-2">{fileError}</p>
-                    )}
-                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-gold-500 hover:bg-gold-50 transition-colors">
-                    <FaImage className="text-2xl text-gray-400 mb-2" />
-                    <span className="text-sm text-gray-500">Cliquez pour choisir une image</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleImageChange(e.target.files?.[0] || null)}
-                    />
-                  </label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Largeur</label>
+                    <input type="number" value={imgWidth} onChange={e => setImgWidth(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Hauteur</label>
+                    <input type="number" value={imgHeight} onChange={e => setImgHeight(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none bg-gray-50" />
+                  </div>
                 </div>
+                <p className="text-xs text-gray-400 mt-1">L&apos;image sera insérée en haut du contenu de l&apos;article</p>
               </div>
-              )}
             </div>
 
             <label className="flex items-center space-x-3 cursor-pointer">

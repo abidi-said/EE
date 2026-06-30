@@ -1,15 +1,17 @@
-import { FormEvent, useState, useEffect } from 'react'
+import { FormEvent, useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
 import { useAuth } from '../../contexts/AuthContext'
+import Toast from './Toast'
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
+  const [toast, setToast] = useState<{ type: 'error'; message: string } | null>(null)
+  const closeToast = useCallback(() => setToast(null), [])
   const [loading, setLoading] = useState(false)
   const { login, isLoggedIn } = useAuth()
   const router = useRouter()
@@ -20,13 +22,13 @@ export default function AdminLogin() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    setError('')
+    setToast(null)
     setLoading(true)
     try {
       await login(email, password)
       router.push('/admin/posts')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Identifiants incorrects')
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Identifiants incorrects' })
     } finally {
       setLoading(false)
     }
@@ -58,12 +60,9 @@ export default function AdminLogin() {
           </div>
 
           <div className="bg-white rounded-2xl shadow-2xl p-8">
+            {toast && <Toast type={toast.type} message={toast.message} onClose={closeToast} />}
+
             <form onSubmit={handleSubmit} className="space-y-5">
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">

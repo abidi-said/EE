@@ -1,8 +1,9 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import AdminLayout from '../../components/admin/AdminLayout'
+import Toast from '../../components/admin/Toast'
 import { uploadToLocal } from '../../lib/api'
-import { FaUpload, FaPlay, FaCheck, FaTimes, FaSpinner } from 'react-icons/fa'
+import { FaUpload, FaPlay, FaSave, FaTimes, FaSpinner } from 'react-icons/fa'
 import type { SiteConfig } from '../api/site-config'
 
 const STATIC_MODE = typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_STATIC_MODE === 'true'
@@ -17,7 +18,8 @@ export default function AdminVideoPage() {
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState<'video' | 'thumbnail' | null>(null)
   const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const closeToast = useCallback(() => setToast(null), [])
   const videoRef = useRef<HTMLInputElement>(null)
   const thumbRef = useRef<HTMLInputElement>(null)
 
@@ -28,7 +30,7 @@ export default function AdminVideoPage() {
       const data = await res.json()
       setConfig(data)
     } catch {
-      setMessage({ type: 'error', text: 'Erreur lors du chargement de la configuration' })
+      setToast({ type: 'error', message: 'Erreur lors du chargement de la configuration' })
     } finally {
       setLoading(false)
     }
@@ -36,14 +38,28 @@ export default function AdminVideoPage() {
 
   useEffect(() => { loadConfig() }, [])
 
+  const getUploadPath = (url: string): string | null => {
+    const m = url.match(/\/uploads\/(.+)$/)
+    return m ? m[1] : null
+  }
+
+  const deleteFile = async (url: string) => {
+    const uploadPath = getUploadPath(url)
+    if (!uploadPath) return
+    try {
+      await fetch(`/api/uploads/${uploadPath}`, { method: 'DELETE' })
+    } catch {}
+  }
+
   const handleUpload = async (file: File, type: 'video' | 'thumbnail') => {
-    const maxSize = type === 'video' ? 50 * 1024 * 1024 : 5 * 1024 * 1024
+    const maxSize = type === 'video' ? 100 * 1024 * 1024 : 5 * 1024 * 1024
     if (file.size > maxSize) {
-      setMessage({ type: 'error', text: type === 'video' ? 'La vidéo ne doit pas dépasser 50 Mo' : 'L\'image ne doit pas dépasser 5 Mo' })
+      setToast({ type: 'error', message: type === 'video' ? 'La vidéo ne doit pas dépasser 50 Mo' : 'L\'image ne doit pas dépasser 5 Mo' })
       return
     }
+    const oldUrl = config?.[type === 'video' ? 'heroVideo' : 'heroThumbnail']
     setUploading(type)
-    setMessage(null)
+    setToast(null)
     try {
       const reader = new FileReader()
       reader.onload = async () => {
@@ -51,12 +67,13 @@ export default function AdminVideoPage() {
         const folder = type === 'video' ? 'video' : 'thumbnail'
         const url = await uploadToLocal(dataUrl, folder)
         setConfig((prev) => prev ? { ...prev, [type === 'video' ? 'heroVideo' : 'heroThumbnail']: url } : null)
-        setMessage({ type: 'success', text: `${type === 'video' ? 'Vidéo' : 'Miniature'} uploadée. Cliquez sur "Enregistrer" pour appliquer.` })
+        if (oldUrl) await deleteFile(oldUrl)
+        setToast({ type: 'success', message: `${type === 'video' ? 'Vidéo' : 'Miniature'} uploadée avec succès!` })
         setUploading(null)
       }
       reader.readAsDataURL(file)
     } catch (err) {
-      setMessage({ type: 'error', text: err instanceof Error ? err.message : "Échec de l'upload" })
+      setToast({ type: 'error', message: err instanceof Error ? err.message : "Échec de l'upload" })
       setUploading(null)
     }
   }
@@ -64,7 +81,7 @@ export default function AdminVideoPage() {
   const handleSave = async () => {
     if (!config) return
     setSaving(true)
-    setMessage(null)
+    setToast(null)
     try {
       const res = await fetch('/api/site-config', {
         method: 'PUT',
@@ -72,9 +89,9 @@ export default function AdminVideoPage() {
         body: JSON.stringify({ heroVideo: config.heroVideo, heroThumbnail: config.heroThumbnail }),
       })
       if (!res.ok) throw new Error('Erreur lors de la sauvegarde')
-      setMessage({ type: 'success', text: 'Vidéo enregistrée avec succès!' })
+      setToast({ type: 'success', message: 'Vidéo enregistrée avec succès!' })
     } catch (err) {
-      setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Erreur lors de la sauvegarde' })
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Erreur lors de la sauvegarde' })
     } finally {
       setSaving(false)
     }
@@ -95,12 +112,7 @@ export default function AdminVideoPage() {
       <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl font-bold text-navy-900 mb-8">Vidéo de la section Hero</h1>
 
-        {message && (
-          <div className={`mb-6 px-4 py-3 rounded-lg text-sm ${message.type === 'success' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-red-50 border border-red-200 text-red-700'}`}>
-            {message.type === 'success' ? <FaCheck className="inline mr-1" /> : <FaTimes className="inline mr-1" />}
-            {message.text}
-          </div>
-        )}
+        {toast && <Toast type={toast.type} message={toast.message} onClose={closeToast} />}
 
         <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
           <div>
@@ -141,7 +153,7 @@ export default function AdminVideoPage() {
               {uploading === 'video' ? <FaSpinner className="animate-spin" /> : <FaUpload />}
               <span>{uploading === 'video' ? 'Upload...' : 'Choisir une vidéo MP4'}</span>
             </button>
-            <p className="text-xs text-gray-500 mt-2">Max 50 Mo. Format MP4 uniquement.</p>
+            <p className="text-xs text-gray-500 mt-2">Max 100 Mo. Format MP4 uniquement.</p>
           </div>
 
           <div className="border-t pt-6">
@@ -185,7 +197,7 @@ export default function AdminVideoPage() {
               className="flex items-center space-x-2 px-6 py-3 rounded-lg font-bold text-navy-900 transition-all shadow-lg disabled:opacity-60"
               style={{ backgroundColor: '#eab308' }}
             >
-              {saving ? <FaSpinner className="animate-spin" /> : <FaCheck />}
+              {saving ? <FaSpinner className="animate-spin" /> : <FaSave />}
               <span>{saving ? 'Enregistrement...' : 'Enregistrer'}</span>
             </button>
           </div>

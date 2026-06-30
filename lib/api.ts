@@ -182,13 +182,21 @@ export function getImageUrl(image: string | null): string | null {
   if (!image) return null
   if (image.startsWith('data:')) return image
   if (image.startsWith('/tmp/')) return null
+  if (image.startsWith('/api/uploads/')) return image
   if (image.startsWith('/uploads/')) return image
   if (image.startsWith('http')) return image
   return `https://api.epoxy.tn/storage/${image}`
 }
 
-export function processBody(body: string): string {
-  let html = body
+export function getPostCoverUrl(post: { body?: string | null; image?: string | null }): string | null {
+  const body = post.body || ''
+  const m = body.match(/^<div class="featured-image"><img src="([^"]+)"[^>]*><\/div>/)
+  if (m) return m[1]
+  return getImageUrl(post.image ?? null)
+}
+
+export function processBody(body: string | null | undefined): string {
+  let html = body || ''
   html = html.replace(/((?:^[-•]\s.+(\n|$))+)/gm, (match) => {
     const items = match.trim().split('\n').map(l => `<li>${l.replace(/^[-•]\s+?/, '')}</li>`).join('')
     return `<ul>${items}</ul>\n`

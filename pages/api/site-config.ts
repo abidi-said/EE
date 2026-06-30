@@ -25,9 +25,22 @@ function writeConfig(config: SiteConfig) {
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2))
 }
 
+function normalizeUrl(url: string): string {
+  try {
+    const parsed = new URL(url)
+    if (parsed.host === 'localhost:3000') {
+      return parsed.pathname
+    }
+  } catch {}
+  return url
+}
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     const config = readConfig()
+    config.heroVideo = normalizeUrl(config.heroVideo)
+    config.heroThumbnail = normalizeUrl(config.heroThumbnail)
+    config.slides = config.slides.map((s) => ({ ...s, image: normalizeUrl(s.image) }))
     return res.status(200).json(config)
   }
 

@@ -1,8 +1,9 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import AdminLayout from '../../components/admin/AdminLayout'
+import Toast from '../../components/admin/Toast'
 import { uploadToLocal } from '../../lib/api'
-import { FaUpload, FaTrash, FaCheck, FaTimes, FaSpinner, FaArrowUp, FaArrowDown } from 'react-icons/fa'
+import { FaUpload, FaTrash, FaSpinner, FaArrowUp, FaArrowDown } from 'react-icons/fa'
 import type { SiteConfig, SlideData } from '../api/site-config'
 
 const STATIC_MODE = typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_STATIC_MODE === 'true'
@@ -18,7 +19,8 @@ export default function AdminSliderPage() {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null)
   const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const closeToast = useCallback(() => setToast(null), [])
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [editTitle, setEditTitle] = useState('')
   const [editLocation, setEditLocation] = useState('')
@@ -31,7 +33,7 @@ export default function AdminSliderPage() {
       const data = await res.json()
       setConfig(data)
     } catch {
-      setMessage({ type: 'error', text: 'Erreur lors du chargement' })
+      setToast({ type: 'error', message: 'Erreur lors du chargement' })
     } finally {
       setLoading(false)
     }
@@ -41,7 +43,7 @@ export default function AdminSliderPage() {
 
   const saveConfig = async (updated: SiteConfig) => {
     setSaving(true)
-    setMessage(null)
+    setToast(null)
     try {
       const res = await fetch('/api/site-config', {
         method: 'PUT',
@@ -50,9 +52,9 @@ export default function AdminSliderPage() {
       })
       if (!res.ok) throw new Error('Erreur lors de la sauvegarde')
       setConfig(updated)
-      setMessage({ type: 'success', text: 'Modifications enregistrées!' })
+      setToast({ type: 'success', message: 'Modifications enregistrées!' })
     } catch (err) {
-      setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Erreur' })
+      setToast({ type: 'error', message: err instanceof Error ? err.message : 'Erreur' })
     } finally {
       setSaving(false)
     }
@@ -82,7 +84,7 @@ export default function AdminSliderPage() {
 
   const handleUpload = async (files: File[]) => {
     setUploading(true)
-    setMessage(null)
+    setToast(null)
     setUploadProgress({ current: 0, total: files.length })
     const newSlides: SlideData[] = []
     const errors: string[] = []
@@ -103,16 +105,30 @@ export default function AdminSliderPage() {
       await saveConfig(updated)
     }
     if (errors.length > 0) {
-      setMessage({ type: 'error', text: errors.join('; ') })
+      setToast({ type: 'error', message: errors.join('; ') })
     }
     setUploadProgress(null)
     setUploading(false)
+  }
+
+  const getUploadPath = (url: string): string | null => {
+    const m = url.match(/\/uploads\/(.+)$/)
+    return m ? m[1] : null
+  }
+
+  const deleteFile = async (url: string) => {
+    const uploadPath = getUploadPath(url)
+    if (!uploadPath) return
+    try {
+      await fetch(`/api/uploads/${uploadPath}`, { method: 'DELETE' })
+    } catch {}
   }
 
   const handleDelete = async (index: number) => {
     if (!config) return
     const slide = config.slides[index]
     if (!confirm(`Supprimer « ${slide.title} » ?`)) return
+    await deleteFile(slide.image)
     const updated = { ...config, slides: config.slides.filter((_, i) => i !== index) }
     await saveConfig(updated)
   }
@@ -190,12 +206,7 @@ export default function AdminSliderPage() {
           }}
         />
 
-        {message && (
-          <div className={`mb-6 px-4 py-3 rounded-lg text-sm ${message.type === 'success' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-red-50 border border-red-200 text-red-700'}`}>
-            {message.type === 'success' ? <FaCheck className="inline mr-1" /> : <FaTimes className="inline mr-1" />}
-            {message.text}
-          </div>
-        )}
+        {toast && <Toast type={toast.type} message={toast.message} onClose={closeToast} />}
 
         {(!config?.slides || config.slides.length === 0) ? (
           <div className="bg-white rounded-xl shadow-lg p-16 text-center text-gray-400">

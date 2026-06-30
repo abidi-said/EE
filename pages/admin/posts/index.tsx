@@ -1,26 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { FaPlus, FaEdit, FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa'
 import AdminLayout from '../../../components/admin/AdminLayout'
-import { deletePost, formatDate, getImageUrl, getAdminPosts } from '../../../lib/api'
+import Toast from '../../../components/admin/Toast'
+import { deletePost, formatDate, getPostCoverUrl, getAdminPosts } from '../../../lib/api'
 import type { Post } from '../../../types/blog'
 
 export default function AdminPostsPage() {
   const [posts, setPosts] = useState<Post[]>([])
-  const [localImages, setLocalImages] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<number | null>(null)
+  const [toast, setToast] = useState<{ type: 'error'; message: string } | null>(null)
+  const closeToast = useCallback(() => setToast(null), [])
 
   const loadPosts = () => {
     setLoading(true)
-    Promise.all([
-      getAdminPosts(),
-      fetch('/api/post-image').then(r => r.json()).catch(() => ({})),
-    ])
-      .then(([data, localMap]) => {
-        setPosts(data.data)
-        setLocalImages(localMap)
-      })
+    getAdminPosts()
+      .then((data) => setPosts(data.data))
       .catch(() => setPosts([]))
       .finally(() => setLoading(false))
   }
@@ -32,14 +28,9 @@ export default function AdminPostsPage() {
     setDeleting(id)
     try {
       await deletePost(id)
-      await fetch('/api/post-image', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId: id }),
-      }).catch(() => {})
       setPosts((prev) => prev.filter((p) => p.id !== id))
     } catch {
-      alert('Erreur lors de la suppression')
+      setToast({ type: 'error', message: 'Erreur lors de la suppression' })
     } finally {
       setDeleting(null)
     }
@@ -47,6 +38,7 @@ export default function AdminPostsPage() {
 
   return (
     <AdminLayout title="Articles">
+      {toast && <Toast type={toast.type} message={toast.message} onClose={closeToast} />}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-navy-900">Articles</h1>
@@ -97,8 +89,7 @@ export default function AdminPostsPage() {
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                           {(() => {
-                            const raw = localImages[post.id]
-                            const src = raw && !raw.startsWith('<') ? raw : getImageUrl(post.image) || raw?.match(/src="([^"]+)"/)?.[1]
+                            const src = getPostCoverUrl(post)
                             return src ? (
                               <img src={src} alt="" className="w-full h-full object-cover" />
                             ) : (
@@ -132,7 +123,7 @@ export default function AdminPostsPage() {
                       <div className="flex items-center justify-end space-x-2">
                         {post.is_published && (
                           <Link
-                            href={`/blog/${post.id}`}
+                            href={`/blog/${post.slug}`}
                             target="_blank"
                             className="p-2 text-gray-400 hover:text-navy-800 transition-colors"
                             title="Voir"

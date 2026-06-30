@@ -1,25 +1,22 @@
 import Link from 'next/link'
 import { FaCalendar, FaArrowRight } from 'react-icons/fa'
-import { formatDate, getImageUrl } from '../../lib/api'
+import { formatDate, getPostCoverUrl } from '../../lib/api'
 import type { Post } from '../../types/blog'
 
 interface BlogCardProps {
   post: Post
-  localImage?: string | null
 }
 
-export default function BlogCard({ post, localImage }: BlogCardProps) {
-  const imageUrl = localImage && !localImage.startsWith('<') ? localImage : getImageUrl(post.image)
-  const imageMarkup = localImage?.startsWith('<') ? localImage : null
-  const imageSrc = imageMarkup ? imageMarkup.match(/src="([^"]+)"/)?.[1] : imageUrl
+export default function BlogCard({ post }: BlogCardProps) {
+  const imageUrl = getPostCoverUrl(post)
 
   return (
     <article className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group">
-      <Link href={`/blog/${post.id}`}>
+      <Link href={`/blog/${post.slug}`}>
         <div className="aspect-video bg-navy-100 overflow-hidden">
-          {imageSrc ? (
+          {imageUrl ? (
             <img
-              src={imageSrc}
+              src={imageUrl}
               alt={post.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />

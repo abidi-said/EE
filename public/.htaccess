@@ -1,0 +1,16 @@
+RewriteEngine On
+
+# Redirect to trailing slash for directories (Next.js static export)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !(.)/$
+RewriteCond %{REQUEST_URI} !^/uploads/
+RewriteRule ^(.*)$ /$1/ [L,R=301]
+
+# Serve index.html for directory requests
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /$1/index.html [L]
+
+# Replace __DOMAIN__ placeholder in sitemap.xml with actual domain at runtime
+AddOutputFilterByType SUBSTITUTE application/xml text/xml
+Substitute "s|__DOMAIN__|https://%{HTTP_HOST}|ni"

@@ -7,7 +7,7 @@ type Data = { url: string } | { error: string }
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '6mb',
+      sizeLimit: '150mb',
     },
   },
 }
@@ -41,7 +41,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
   const filepath = path.join(dir, filename)
   fs.writeFileSync(filepath, buffer)
 
-  const url = `/uploads/${subfolder}${subfolder ? '/' : ''}${filename}`
+  const url = `/api/uploads/${subfolder}${subfolder ? '/' : ''}${filename}`
 
   res.status(200).json({ url })
 }

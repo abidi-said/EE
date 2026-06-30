@@ -1,22 +1,27 @@
-import fs from 'fs'
-import path from 'path'
+import { useEffect, useState } from 'react'
 import { FaNewspaper } from 'react-icons/fa'
 import BlogLayout from '../../components/blog/BlogLayout'
 import BlogCard from '../../components/blog/BlogCard'
+import { getPosts } from '../../lib/api'
 import type { Post } from '../../types/blog'
 
-interface BlogIndexPageProps {
-  initialPosts: Post[]
-  localImages: Record<string, string>
-}
+export default function BlogIndexPage() {
+  const [posts, setPosts] = useState<Post[]>([])
+  const [loading, setLoading] = useState(true)
 
-export default function BlogIndexPage({ initialPosts, localImages }: BlogIndexPageProps) {
+  useEffect(() => {
+    getPosts()
+      .then((paginated) => setPosts(paginated.data.filter(p => p.is_published)))
+      .catch(() => setPosts([]))
+      .finally(() => setLoading(false))
+  }, [])
+
   return (
     <BlogLayout
       title="Blog"
       description="Actualités, conseils et guides sur l'étanchéité et l'époxy en Tunisie."
     >
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-100 rounded-full mb-6">
@@ -28,15 +33,19 @@ export default function BlogIndexPage({ initialPosts, localImages }: BlogIndexPa
             </p>
           </div>
 
-          {initialPosts.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <div className="w-10 h-10 border-4 border-gold-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : posts.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-gray-500 text-lg">Aucun article publié pour le moment.</p>
               <p className="text-gray-400 text-sm mt-2">Revenez bientôt pour découvrir nos actualités.</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {initialPosts.map((post) => (
-                <BlogCard key={post.id} post={post} localImage={localImages[post.id]} />
+              {posts.map((post) => (
+                <BlogCard key={post.id} post={post} />
               ))}
             </div>
           )}
@@ -44,23 +53,4 @@ export default function BlogIndexPage({ initialPosts, localImages }: BlogIndexPa
       </section>
     </BlogLayout>
   )
-}
-
-export async function getStaticProps() {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.epoxy.tn/api'
-    const res = await fetch(`${baseUrl}/posts`)
-    const json = await res.json()
-    const posts: Post[] = (json.posts?.data || []).filter((p: Post) => p.is_published)
-
-    let localImages: Record<string, string> = {}
-    try {
-      const mapPath = path.join(process.cwd(), 'data', 'post-images.json')
-      localImages = JSON.parse(fs.readFileSync(mapPath, 'utf-8'))
-    } catch {}
-
-    return { props: { initialPosts: posts, localImages } }
-  } catch {
-    return { props: { initialPosts: [], localImages: {} } }
-  }
 }
